@@ -1,7 +1,7 @@
 #include "widget.h"
 #include <QApplication>
 
-// Hello GitHub :)
+// Hello GitHub from Windows Tablet :)
 
 int main(int argc, char *argv[])
 {
