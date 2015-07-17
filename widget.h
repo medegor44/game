@@ -9,19 +9,18 @@
 #include <QPainter>
 #include <QTimer>
 #include <QMessageBox>
+#include <QHBoxLayout>
 
-#include "game_model/graph.h"
+#include "game_scene/game_scene.h"
 
 class Widget : public QWidget
 {
     Q_OBJECT
 
 private:
-    QTextEdit *text;
-    Graph *g;
-
-protected:
-    void paintEvent(QPaintEvent *e);
+    QHBoxLayout *mainLayout;
+    QGraphicsView *view;
+    GameScene *scene;
 
 public:
     Widget(QWidget *parent = 0);

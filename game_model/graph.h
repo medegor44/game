@@ -24,6 +24,8 @@ public: // Перечисления
 
         QVector <TerrainType> edges;
         TerrainType type;
+
+        static const int maxTypes = 3;
     };
     typedef QVector <QVector <TerrainPoint>> TerrainMatrix;
 
@@ -46,8 +48,14 @@ public:
     bool checkBoard(QPoint begin, QPoint end);
     int getDist(QPoint begin, QPoint end);
 
+    // Отладочные методы
     void printBoard();
     void printMatrix();
+
+    int getWidth() const
+    { return width; }
+    int getHeight() const
+    { return height; }
 };
 
 #endif // GRAPH

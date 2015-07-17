@@ -16,8 +16,13 @@ CONFIG += C++11
 SOURCES += main.cpp\
         widget.cpp \
     game_model/graph.cpp \
-    game_model/graph_algorithms.cpp
+    game_model/graph_algorithms.cpp \
+    game_scene/game_scene.cpp
 
 HEADERS  += widget.h \
     game_model/graph.h \
-    game_model/graph_algorithms.h
+    game_model/graph_algorithms.h \
+    game_scene/game_scene.h
+
+RESOURCES += \
+    textures.qrc
