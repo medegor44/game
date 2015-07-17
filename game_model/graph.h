@@ -16,7 +16,7 @@
 class Graph
 {
 public: // Перечисления
-    enum directions { up, down, left, right };
+    enum Directions { up, down, left, right };
 
     struct TerrainPoint
     {

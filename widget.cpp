@@ -9,6 +9,7 @@ Widget::Widget(QWidget *parent)
     mainLayout->addWidget(view);
 
     scene = new GameScene(view);
+    scene->addItem(new Bonus(Bonus::BonusType::live, QPoint(9, 0), 30));
 
     view->setScene(scene);
 }

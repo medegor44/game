@@ -17,12 +17,16 @@ SOURCES += main.cpp\
         widget.cpp \
     game_model/graph.cpp \
     game_model/graph_algorithms.cpp \
-    game_scene/game_scene.cpp
+    game_scene/game_scene.cpp \
+    game_objects/bonus.cpp \
+    game_objects/abstract_game_object.cpp
 
 HEADERS  += widget.h \
     game_model/graph.h \
     game_model/graph_algorithms.h \
-    game_scene/game_scene.h
+    game_scene/game_scene.h \
+    game_objects/abstract_game_object.h \
+    game_objects/bonus.h
 
 RESOURCES += \
     textures.qrc
