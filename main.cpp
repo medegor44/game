@@ -1,6 +1,8 @@
 #include "widget.h"
 #include <QApplication>
 
+// Hello GitHub :)
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
