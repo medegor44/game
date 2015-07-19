@@ -15,7 +15,6 @@
 #define FREE_CELL 1
 #define WALL 0
 #define VISITED 2
-#define elif(cond) else if((cond))
 
 class Generator
 {
