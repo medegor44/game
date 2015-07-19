@@ -15,7 +15,7 @@ Generator::Generator(int w, int h)
 
     cellCount = cellsWidth * cellsHeight;
 
-    visited.resize(cellCount);
+//    visited.resize(cellCount);
 
     initMatrix();
 }
@@ -24,15 +24,43 @@ void Generator::initMatrix()
 {
     for(int i = 0; i < height; i++)
         for(int j = 0 ; j < width; j++)
-            maze[i][j] = WALL;
+            maze[i][j] = FREE_CELL;
 
     for(int i = 0; i < height; i++)
         for(int j = (i % 2 == 0 ? 1 : 0); j < width; j += (i % 2 == 0 ? 2 : 1))
-            maze[i][j] = FREE_CELL;
+            maze[i][j] = WALL;
 }
 
-void Generator::start()
+void Generator::makeIndefinite()
 {
+    std::default_random_engine random(std::chrono::system_clock::now()
+                                      .time_since_epoch().count());
+
+    for(int i = 0; i < height; i++) {
+        QVector <int> walls;
+
+        for(int j = 0; j < width; j++)
+            if(maze[i][j] == WALL) walls.push_back(j);
+
+        for(int k = 0; k < int(walls.size() * ratio); ) {
+            int rWall = walls[random() % walls.size()];
+
+            if((i - 1 >= 0 && i < height && maze[i-1][rWall] != WALL &&
+                                           maze[i+1][rWall] != WALL) ||
+               (rWall - 1 >= 0 && rWall + 1 < width &&
+                                           maze[i][rWall-1] != WALL &&
+                                           maze[i][rWall+1] != WALL)) {
+                maze[i][rWall] = VISITED;
+                k++;
+            }
+        }
+    }
+}
+
+void Generator::start(bool indefinite)
+{
+   // print();
+
     QPoint current(0, 0);
     QStack <QPoint> stack;
 
@@ -61,8 +89,13 @@ void Generator::start()
             cellCount--;
         } else if(!stack.isEmpty())
             current = stack.pop();
-        else ;
     }
+
+    print();
+
+
+   if(indefinite) makeIndefinite();
+   std::cout << "Done.";
 }
 
 QVector <QPoint> Generator::getNeighbours(QPoint cell)
@@ -72,16 +105,16 @@ QVector <QPoint> Generator::getNeighbours(QPoint cell)
     int x = cell.x();
     int y = cell.y();
 
-    if(y - 2 >= 0 && maze[y - 2][x] != VISITED)
+    if(y - 2 >= 0 && maze[y - 2][x] != WALL && maze[y-2][x] != VISITED)
         v.push_back(QPoint(x, y - 2));
 
-    if(y + 2 < height && maze[y + 2][x] != VISITED)
+    if(y + 2 < height && maze[y + 2][x] != WALL && maze[y+2][x] != VISITED)
         v.push_back(QPoint(x, y + 2));
 
-    if(x - 2 >= 0 && maze[y][x - 2] != VISITED)
+    if(x - 2 >= 0 && maze[y][x-2] != WALL && maze[y][x - 2] != VISITED)
         v.push_back(QPoint(x - 2, y));
 
-    if(x + 2 < width && maze[y][x + 2] != VISITED)
+    if(x + 2 < width && maze[y][x+2] != WALL && maze[y][x + 2] != VISITED)
         v.push_back(QPoint(x + 2, y));
 
     return v;
@@ -90,15 +123,16 @@ QVector <QPoint> Generator::getNeighbours(QPoint cell)
 void Generator::print()
 {
     QFile file("out.txt");
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
+    file.open(QIODevice::Append | QIODevice::Text);
     QTextStream out(&file), cout(stdout);
 
     for(int i = 0; i < height; i++) {
         for(int j = 0; j < width; j++)
-            out << (maze[i][j] == VISITED ? "* " : "  ");
+            out << (maze[i][j] == WALL ? "* " : "  ");
 
         out << endl;
     }
+    out << "\n\n";
 
-    cout << "Finished!" << endl;
+    cout << "\n\n" << endl;
 }
