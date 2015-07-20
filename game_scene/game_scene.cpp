@@ -32,3 +32,21 @@ void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
+void GameScene::newGraph()
+{
+    Generator generator(graphWidth, graphHeight);
+    generator.start();
+
+    delete graph;
+    graph = generator.getGraph();
+
+    /* Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
+     * ширины и высоты
+     */
+
+    setSceneRect(0, 0, generator.getWidth() * pixels,
+                       generator.getHeight() * pixels);
+
+    update();
+}
+

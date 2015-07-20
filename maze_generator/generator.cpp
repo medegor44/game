@@ -2,8 +2,8 @@
 
 Generator::Generator(int w, int h)
 {
-    width = w % 2 ? w : w + 1;
-    height = h % 2 ? h : h + 1;
+    width = w % 2 == 0 ? w + 1 : w;
+    height = h % 2 == 0 ? h + 1 : h;
 
     maze = new int *[height];
 
@@ -23,12 +23,17 @@ Generator::Generator(int w, int h)
 void Generator::initMatrix()
 {
     for(int i = 0; i < height; i++)
-        for(int j = 0 ; j < width; j++)
-            maze[i][j] = FREE_CELL;
+        for(int j = 0 ; j < width; j++) {
+            if(i % 2 == 0 && j % 2 == 0) {
+                maze[i][j] = free_cell;
+                points.push_back(QPoint(j, i));
+            } else
+                maze[i][j] = wall;
+        }
 
-    for(int i = 0; i < height; i++)
+/*  for(int i = 0; i < height; i++)
         for(int j = (i % 2 == 0 ? 1 : 0); j < width; j += (i % 2 == 0 ? 2 : 1))
-            maze[i][j] = WALL;
+            maze[i][j] = wall; */
 }
 
 void Generator::makeIndefinite()
@@ -40,17 +45,17 @@ void Generator::makeIndefinite()
         QVector <int> walls;
 
         for(int j = 0; j < width; j++)
-            if(maze[i][j] == WALL) walls.push_back(j);
+            if(maze[i][j] == wall) walls.push_back(j);
 
         for(int k = 0; k < int(walls.size() * ratio); ) {
             int rWall = walls[random() % walls.size()];
 
-            if((i - 1 >= 0 && i < height && maze[i-1][rWall] != WALL &&
-                                           maze[i+1][rWall] != WALL) ||
+            if((i - 1 >= 0 && i < height && maze[i-1][rWall] != wall &&
+                                           maze[i+1][rWall] != wall) ||
                (rWall - 1 >= 0 && rWall + 1 < width &&
-                                           maze[i][rWall-1] != WALL &&
-                                           maze[i][rWall+1] != WALL)) {
-                maze[i][rWall] = VISITED;
+                                           maze[i][rWall-1] != wall &&
+                                           maze[i][rWall+1] != wall)) {
+                maze[i][rWall] = visited;
                 k++;
             }
         }
@@ -59,15 +64,13 @@ void Generator::makeIndefinite()
 
 void Generator::start(bool indefinite)
 {
-   // print();
-
     QPoint current(0, 0);
     QStack <QPoint> stack;
 
     std::default_random_engine random(std::chrono::system_clock::now()
                                       .time_since_epoch().count());
 
-    maze[current.y()][current.x()] = VISITED;
+    maze[current.y()][current.x()] = visited;
 
     cellCount--;
     while(cellCount) {
@@ -79,10 +82,10 @@ void Generator::start(bool indefinite)
 
             if(next.y() == current.y()) {
                 int x = (next.x() + current.x()) / 2;
-                maze[next.y()][x] = maze[next.y()][next.x()] = VISITED;
+                maze[next.y()][x] = maze[next.y()][next.x()] = visited;
             } else {
                 int y = (next.y() + current.y()) / 2;
-                maze[y][next.x()] = maze[next.y()][next.x()] = VISITED;
+                maze[y][next.x()] = maze[next.y()][next.x()] = visited;
             }
 
             current = next;
@@ -91,11 +94,24 @@ void Generator::start(bool indefinite)
             current = stack.pop();
     }
 
-    print();
-
+    //print();
 
    if(indefinite) makeIndefinite();
-   std::cout << "Done.";
+//   std::cout << "Done.";
+}
+
+Graph *Generator::getGraph()
+{
+    Graph *graph = new Graph(width, height);
+
+    for(int y = 0; y < height; y++)
+        for(int x = 0; x < width; x++) {
+            graph->setCellType(QPoint(x, y), maze[y][x] == wall ?
+                                   Graph::TerrainPoint::TerrainType::wall
+                                 : Graph::TerrainPoint::TerrainType::field);
+        }
+
+    return graph; // Удалением старой версии занимается игрова сцена
 }
 
 QVector <QPoint> Generator::getNeighbours(QPoint cell)
@@ -105,16 +121,16 @@ QVector <QPoint> Generator::getNeighbours(QPoint cell)
     int x = cell.x();
     int y = cell.y();
 
-    if(y - 2 >= 0 && maze[y - 2][x] != WALL && maze[y-2][x] != VISITED)
+    if(y - 2 >= 0 && maze[y - 2][x] != wall && maze[y-2][x] != visited)
         v.push_back(QPoint(x, y - 2));
 
-    if(y + 2 < height && maze[y + 2][x] != WALL && maze[y+2][x] != VISITED)
+    if(y + 2 < height && maze[y + 2][x] != wall && maze[y+2][x] != visited)
         v.push_back(QPoint(x, y + 2));
 
-    if(x - 2 >= 0 && maze[y][x-2] != WALL && maze[y][x - 2] != VISITED)
+    if(x - 2 >= 0 && maze[y][x-2] != wall && maze[y][x - 2] != visited)
         v.push_back(QPoint(x - 2, y));
 
-    if(x + 2 < width && maze[y][x+2] != WALL && maze[y][x + 2] != VISITED)
+    if(x + 2 < width && maze[y][x+2] != wall && maze[y][x + 2] != visited)
         v.push_back(QPoint(x + 2, y));
 
     return v;
@@ -128,7 +144,7 @@ void Generator::print()
 
     for(int i = 0; i < height; i++) {
         for(int j = 0; j < width; j++)
-            out << (maze[i][j] == WALL ? "* " : "  ");
+            out << (maze[i][j] == wall ? "* " : "  ");
 
         out << endl;
     }
