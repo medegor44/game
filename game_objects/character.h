@@ -3,32 +3,37 @@
 
 #include "abstract_game_object.h"
 
+#ifndef GRAPH
+   #include "../game_model/graph.h"
+#endif
+#ifndef BONUS
+   #include "bonus.h"
+#endif
+
 class Character : public AbstractGameObject
 {
 public:
-    enum directions
+    enum Directions
     { up, down, left, right };
 
 private:
-    directions currentDirecton;
+    Directions currentDirecton;
+    Graph *gameBoard;
     int lives;
+
+    void checkCollisionsWithWall();
+    void checkCollisionsWithItems();
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
                QWidget *widget);
 
-signals:
-    void isCollideWall();
-
-public slots:
-    void collideWall(bool b);
-
 public:
-    Character(QPoint bp, int pixels);
+    Character(QPoint bp, int pixels, Graph *gameBoard);
 
     void move();
 
-    void setCurrentDirecton(directions dir)
+    void setCurrentDirecton(Directions dir)
     { currentDirecton = dir; }
 
     ~Character(){}

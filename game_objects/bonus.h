@@ -17,6 +17,8 @@ protected:
 public:
     Bonus(BonusType t, QPoint bp, int pixels);
     ~Bonus(){}
+    BonusType getType() const
+    { return type; }
 };
 
 #endif // BONUS

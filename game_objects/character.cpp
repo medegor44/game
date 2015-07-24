@@ -1,9 +1,10 @@
 #include "character.h"
 
-Character::Character(QPoint bp, int pixels)
+Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     : AbstractGameObject(bp, pixels)
 {
     lives = 3;
+    this->gameBoard = gameBoard;
 }
 
 void Character::move()
@@ -28,27 +29,17 @@ void Character::move()
     boundingRect_m.moveTo(QPointF(boardPos.x() * pixelsWidth,
                                   boardPos.y() * pixelsWidth));
 
-    emit isCollideWall(); /* Совершение запроса для получения информации о
-                             столкновении со стеной */
+    // Проверить столкновения со стеной и другими элементами нв сцене
+    checkCollisionsWithWall();
+    checkCollisionsWithItems();
 }
 
-void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                      QWidget *widget)
+void Character::checkCollisionsWithWall()
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    painter->fillRect(boundingRect(), Qt::blue);
-}
-
-void Character::collideWall(bool b) // Получение информации
-{
-    if(b) {
-        if((--lives) == 0) {
+    if(gameBoard->getType(boardPos) == Graph::TerrainPoint::TerrainType::wall) {
+        if((--lives) == 0)
             qDebug() << "Game over!";
-        }
 
-        // Перемещениие в обратном направлении
         switch (currentDirecton) {
         case up:
             currentDirecton = down;
@@ -64,4 +55,39 @@ void Character::collideWall(bool b) // Получение информации
             break;
         }
     }
+}
+
+void Character::checkCollisionsWithItems()
+{
+    QList <QGraphicsItem *> items = collidingItems();
+
+    for(auto i = items.begin(); i != items.end(); i++) {
+        if((*i) == this)
+            continue;
+        else {
+            QGraphicsObject *obj = dynamic_cast <QGraphicsObject *> (*i);
+
+            if(obj->objectName() == "Bonus") {
+                Bonus *bonus = dynamic_cast <Bonus *> (obj);
+                if(!bonus->isActive())
+                    continue;
+
+                switch (bonus->getType()) {
+                case Bonus::BonusType::live:
+                    lives++;
+                    break;
+                /* Продолжение следует... */
+                }
+            }
+        }
+    }
+}
+
+void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                      QWidget *widget)
+{
+    Q_UNUSED(option);
+    Q_UNUSED(widget);
+
+    painter->fillRect(boundingRect(), Qt::blue);
 }

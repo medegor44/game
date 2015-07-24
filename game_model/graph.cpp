@@ -37,9 +37,12 @@ void Graph::initBoard()
 // ### Получение и установка типа точки с координатами p ###
 Graph::TerrainPoint::TerrainType Graph::getType(QPoint p) const
 {
-    Q_ASSERT_X(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height),
+    /*Q_ASSERT_X(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height),
                "In TerrainType Graph::getType(QPoint p);",
-               "Incorrect coordinates.");
+               "Incorrect coordinates.");*/
+
+    if(!(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height)))
+        return TerrainPoint::TerrainType::wall;
 
     return board[p.y()][p.x()].type;
 }
