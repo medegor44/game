@@ -12,6 +12,8 @@ Bonus::Bonus(BonusType t, QPoint bp, int pixels)
     default:
         break;
     }
+
+    setObjectName("Bonus");
 }
 
 void Bonus::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
@@ -20,5 +22,6 @@ void Bonus::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(option);
     Q_UNUSED(widget);
 
-    painter->drawPixmap(boundingRect().toRect(), texture);
+    if(active_m)
+        painter->drawPixmap(boundingRect().toRect(), texture);
 }

@@ -7,6 +7,8 @@
 
 class AbstractGameObject : public QGraphicsObject
 {
+    Q_OBJECT
+
 protected:
     QPixmap texture;
     QPoint boardPos;

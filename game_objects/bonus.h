@@ -5,20 +5,31 @@
 
 class Bonus : public AbstractGameObject
 {
+    Q_OBJECT
+
 public:
     enum BonusType { live }; // Для начала из бонусов только жизнь
 
 private:
     BonusType type;
+    bool active_m = true;
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
 
 public:
     Bonus(BonusType t, QPoint bp, int pixels);
-    ~Bonus(){}
+
+    bool active()
+    { return active_m; }
+
+    void deactive()
+    { active_m = false; }
+
     BonusType getType() const
     { return type; }
+
+    ~Bonus(){}
 };
 
 #endif // BONUS

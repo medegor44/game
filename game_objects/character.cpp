@@ -5,6 +5,7 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
 {
     lives = 3;
     this->gameBoard = gameBoard;
+    setObjectName("Character");
 }
 
 void Character::move()
@@ -34,6 +35,8 @@ void Character::move()
     checkCollisionsWithItems();
 }
 
+
+
 void Character::checkCollisionsWithWall()
 {
     if(gameBoard->getType(boardPos) == Graph::TerrainPoint::TerrainType::wall) {
@@ -59,7 +62,7 @@ void Character::checkCollisionsWithWall()
 
 void Character::checkCollisionsWithItems()
 {
-    QList <QGraphicsItem *> items = collidingItems();
+    QList <QGraphicsItem *> items = scene()->collidingItems(this);
 
     for(auto i = items.begin(); i != items.end(); i++) {
         if((*i) == this)
@@ -69,7 +72,7 @@ void Character::checkCollisionsWithItems()
 
             if(obj->objectName() == "Bonus") {
                 Bonus *bonus = dynamic_cast <Bonus *> (obj);
-                if(!bonus->isActive())
+                if(!bonus->active())
                     continue;
 
                 switch (bonus->getType()) {
@@ -78,6 +81,8 @@ void Character::checkCollisionsWithItems()
                     break;
                 /* Продолжение следует... */
                 }
+
+                bonus->deactive();
             }
         }
     }
@@ -90,4 +95,20 @@ void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
     Q_UNUSED(widget);
 
     painter->fillRect(boundingRect(), Qt::blue);
+}
+
+void Character::keyPressEvent(QKeyEvent *event)
+{
+    QString text = event->text();
+
+    if(text == tr("w") || text == tr("W"))
+        currentDirecton = up;
+    else if(text == tr("s") || text == tr("S"))
+        currentDirecton = down;
+    else if(text == tr("a") || text == tr("A"))
+        currentDirecton = left;
+    else if(text == tr("d") || text == tr("D"))
+        currentDirecton = right;
+
+    qDebug() << "Lives" << lives;
 }
