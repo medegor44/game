@@ -3,18 +3,9 @@
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent)
 {
-//    graph = new Graph(graphWidth, graphHeight);
+    graph = new Graph(graphWidth, graphHeight);
 
-//    graph->setCellType(QPoint(2, 0), Terrain_t::wall);
-//    graph->setCellType(QPoint(3, 0), Terrain_t::hill);
-
-    Generator gen(graphWidth, graphHeight);
-    gen.start();
-    graph = gen.getGraph();
-
-    landscapeTextures[Terrain_t::wall] = QPixmap(":/textures/bricks.png");
-    landscapeTextures[Terrain_t::field] = QPixmap(":/textures/grass.png");
-    landscapeTextures[Terrain_t::hill] = QPixmap(":/textures/hill.png");
+    loadTextures();
 
     setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
 
@@ -29,6 +20,8 @@ GameScene::GameScene(QObject *parent)
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
+    Q_UNUSED(rect);
+
     for(int i = sceneRect().x(); i <= graph->getWidth() * pixels; i += pixels)
         painter->drawLine(i, 0, i, graph->getHeight() * pixels);
 
@@ -45,22 +38,27 @@ void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
     }
 }
 
-void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *e)
+void GameScene::keyPressEvent(QKeyEvent *event)
 {
-    if(e->button() == Qt::LeftButton)
+    switch (event->key()) {
+    case Qt::Key_Return:
+    case Qt::Key_Enter:
+        gameLoop.start(120);
+        break;
+    case Qt::Key_G:
         newGraph();
-    else {
-        if(!gameLoop.isActive())
-            gameLoop.start(120);
+        break;
+    case Qt::Key_Escape:
+        gameLoop.stop();
+        break;
     }
+
+    QGraphicsScene::keyPressEvent(event);
 }
 
 void GameScene::updateGame()
 {
     player->move();
-
-//    if(collidingItems(player).size())
-//        qDebug() << "Yes";
 
     update();
     gameLoop.start();
@@ -80,11 +78,16 @@ void GameScene::newGraph()
     player->setGameBoard(graph);
 
     /* Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
-     * ширины и высоты
-     */
+       ширины и высоты */
     setSceneRect(0, 0, generator.getWidth() * pixels,
                        generator.getHeight() * pixels);
 
     update();
 }
 
+void GameScene::loadTextures()
+{
+    landscapeTextures[Terrain_t::wall] = QPixmap(":/textures/bricks.png");
+    landscapeTextures[Terrain_t::field] = QPixmap(":/textures/grass.png");
+    landscapeTextures[Terrain_t::hill] = QPixmap(":/textures/hill.png");
+}

@@ -8,7 +8,7 @@ class Bonus : public AbstractGameObject
     Q_OBJECT
 
 public:
-    enum BonusType { live }; // Для начала из бонусов только жизнь
+    enum BonusType { live, checkpoint }; // Типы бонусов
 
 private:
     BonusType type;
@@ -31,6 +31,7 @@ public:
 
     ~Bonus(){}
 };
+
 
 #endif // BONUS
 

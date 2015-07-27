@@ -28,9 +28,9 @@ HEADERS  += widget.h \
     game_model/graph_algorithms.h \
     game_scene/game_scene.h \
     game_objects/abstract_game_object.h \
-    game_objects/bonus.h \
     maze_generator/generator.h \
-    game_objects/character.h
+    game_objects/character.h \
+    game_objects/bonus.h
 
 RESOURCES += \
     textures.qrc

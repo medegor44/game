@@ -25,6 +25,8 @@ public:
     { return boundingRect_m; }
 
     ~AbstractGameObject(){}
+    QPoint getBoardPos() const
+    { return boardPos; }
 };
 
 #endif // ABSTRACT_GAME_OBJECT

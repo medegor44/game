@@ -4,5 +4,6 @@
         <file>textures/grass.png</file>
         <file>textures/hill.png</file>
         <file>textures/live.png</file>
+        <file>textures/checkpoint.png</file>
     </qresource>
 </RCC>

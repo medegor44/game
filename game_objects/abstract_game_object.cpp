@@ -5,6 +5,8 @@
  * @param bp - позиция относительно игрвого поля
  * @param pixels - ширина клетки игрового поля
  */
+
+
 AbstractGameObject::AbstractGameObject(QPoint bp, int pixels)
 {
     boardPos = bp;

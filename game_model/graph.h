@@ -33,6 +33,8 @@ private:
     int width;
     int height;
 
+    QPoint startPos;
+    QPoint endPos;
     TerrainMatrix board;
 
     void initBoard();

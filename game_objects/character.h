@@ -22,6 +22,9 @@ public:
 private:
     Directions currentDirecton;
     Graph *gameBoard;
+    QPoint currentCheckpoint;
+    QPoint startPoint;
+
     int lives;
 
     void checkCollisionsWithWall();
@@ -38,7 +41,6 @@ public slots:
 
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
-
 
     void setCurrentDirecton(Directions dir)
     { currentDirecton = dir; }

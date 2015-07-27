@@ -31,10 +31,11 @@ protected:
     QPixmap landscapeTextures[Graph::TerrainPoint::maxTypes];
 
     void newGraph();
+    void loadTextures();
 
     void drawBackground(QPainter *painter, const QRectF &rect);
 
-    void mousePressEvent(QGraphicsSceneMouseEvent *e);
+    void keyPressEvent(QKeyEvent *event);
 
 protected slots:
     void updateGame();

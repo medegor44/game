@@ -6,6 +6,12 @@ Graph::Graph(int w, int h)
                "w and h must be greather or equal to 2.");
     width = w;
     height = h;
+
+    /* По умолчанию начальная позция - верхний правый угол,
+       конечная - нижний левый */
+    startPos = QPoint(0, 0);
+    endPos = QPoint(w-1, h-1);
+
     initBoard();
 }
 

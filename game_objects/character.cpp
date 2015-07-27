@@ -4,6 +4,12 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     : AbstractGameObject(bp, pixels)
 {
     lives = 3;
+
+    // Начальная позиция и 0 чекпоинт совпадают
+    currentCheckpoint = startPoint = bp;
+
+    currentDirecton = down;
+
     this->gameBoard = gameBoard;
     setObjectName("Character");
 }
@@ -34,32 +40,18 @@ void Character::move()
     boundingRect_m.moveTo(QPointF(boardPos.x() * pixelsWidth,
                                   boardPos.y() * pixelsWidth));
 
+    qDebug() << "Lives =" << lives;
 }
 
 void Character::checkCollisionsWithWall()
 {
     if(gameBoard->getType(boardPos) == Graph::TerrainPoint::TerrainType::wall) {
-        if((--lives) == 0)
-            qDebug() << "Game over!";
-
-        switch (currentDirecton) {
-        case up:
-            currentDirecton = down;
-            boardPos.ry()++;
-            break;
-        case down:
-            currentDirecton = up;
-            boardPos.ry()--;
-            break;
-        case left:
-            currentDirecton = right;
-            boardPos.rx()++;
-            break;
-        case right:
-            currentDirecton = left;
-            boardPos.rx()--;
-            break;
+        if((--lives) == 0) {
+            currentCheckpoint = boardPos = startPoint;
+            lives = 3;
         }
+
+        boardPos = currentCheckpoint;
     }
 }
 
@@ -81,6 +73,9 @@ void Character::checkCollisionsWithItems()
                 switch (bonus->getType()) {
                 case Bonus::BonusType::live:
                     lives++;
+                    break;
+                case Bonus::BonusType::checkpoint:
+                    currentCheckpoint = bonus->getBoardPos();
                     break;
                 /* Продолжение следует... */
                 }
@@ -113,5 +108,5 @@ void Character::keyPressEvent(QKeyEvent *event)
     else if(text == tr("d") || text == tr("D"))
         currentDirecton = right;
 
-    qDebug() << "Lives" << lives;
+//    qDebug() << "Lives" << lives;
 }
