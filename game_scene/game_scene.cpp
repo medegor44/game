@@ -3,10 +3,14 @@
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent)
 {
-    graph = new Graph(graphWidth, graphHeight);
+//    graph = new Graph(graphWidth, graphHeight);
 
-    graph->setCellType(QPoint(2, 0), Terrain_t::wall);
-    graph->setCellType(QPoint(3, 0), Terrain_t::hill);
+//    graph->setCellType(QPoint(2, 0), Terrain_t::wall);
+//    graph->setCellType(QPoint(3, 0), Terrain_t::hill);
+
+    Generator gen(graphWidth, graphHeight);
+    gen.start();
+    graph = gen.getGraph();
 
     landscapeTextures[Terrain_t::wall] = QPixmap(":/textures/bricks.png");
     landscapeTextures[Terrain_t::field] = QPixmap(":/textures/grass.png");
@@ -47,7 +51,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *e)
         newGraph();
     else {
         if(!gameLoop.isActive())
-            gameLoop.start(200);
+            gameLoop.start(120);
     }
 }
 
@@ -55,8 +59,8 @@ void GameScene::updateGame()
 {
     player->move();
 
-    if(collidingItems(player).size())
-        qDebug() << "Yes";
+//    if(collidingItems(player).size())
+//        qDebug() << "Yes";
 
     update();
     gameLoop.start();

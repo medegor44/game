@@ -26,16 +26,15 @@ void Character::move()
         break;
     }
 
+    // Проверить столкновения со стеной и другими элементами нв сцене
+    checkCollisionsWithWall();
+    checkCollisionsWithItems();
+
     // Сдвинуть прямоугольник объекта на новую позицию
     boundingRect_m.moveTo(QPointF(boardPos.x() * pixelsWidth,
                                   boardPos.y() * pixelsWidth));
 
-    // Проверить столкновения со стеной и другими элементами нв сцене
-    checkCollisionsWithWall();
-    checkCollisionsWithItems();
 }
-
-
 
 void Character::checkCollisionsWithWall()
 {
@@ -46,15 +45,19 @@ void Character::checkCollisionsWithWall()
         switch (currentDirecton) {
         case up:
             currentDirecton = down;
+            boardPos.ry()++;
             break;
         case down:
             currentDirecton = up;
+            boardPos.ry()--;
             break;
         case left:
             currentDirecton = right;
+            boardPos.rx()++;
             break;
         case right:
             currentDirecton = left;
+            boardPos.rx()--;
             break;
         }
     }
