@@ -5,6 +5,8 @@
 #include <QPixmap>
 #include <QPainter>
 
+#include "../game_model/graph.h"
+
 class AbstractGameObject : public QGraphicsObject
 {
     Q_OBJECT

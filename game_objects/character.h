@@ -3,27 +3,29 @@
 
 #include <QKeyEvent>
 #include <QGraphicsScene>
-#include "abstract_game_object.h"
+
+
 #ifndef GRAPH
    #include "../game_model/graph.h"
 #endif
-#ifndef BONUS
-   #include "bonus.h"
-#endif
+
+#include "abstract_game_object.h"
+#include "bonus.h"
+#include "checkpoint.h"
 
 class Character : public AbstractGameObject
 {
     Q_OBJECT
 
 public:
-    enum Directions
-    { up, down, left, right };
+    /*enum Directions
+    { up, down, left, right };*/
 
 private:
-    Directions currentDirecton;
+    PublicEnums::Directions currentDirecton;
     Graph *gameBoard;
-    QPoint currentCheckpoint;
-    QPoint startPoint;
+    Checkpoint *startPoint;
+    Checkpoint *currentCheckpoint;
 
     int lives;
 
@@ -42,13 +44,15 @@ public slots:
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
 
-    void setCurrentDirecton(Directions dir)
+    void setCurrentDirecton(PublicEnums::Directions dir)
     { currentDirecton = dir; }
 
     void setGameBoard(Graph *value)
     { gameBoard = value; }
 
     ~Character(){}
+    void collideWithBonus(AbstractGameObject *obj);
+    void collideWithCheckpoint(AbstractGameObject *obj);
 };
 
 #endif // CHARACTER

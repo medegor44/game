@@ -9,9 +9,6 @@ Bonus::Bonus(BonusType t, QPoint bp, int pixels)
     case live:
         texture = QPixmap(":/textures/live.png");
         break;
-    case checkpoint:
-        texture = QPixmap(":/textures/checkpoint.png");
-        break;
     default:
         break;
     }

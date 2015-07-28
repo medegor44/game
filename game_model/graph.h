@@ -13,10 +13,16 @@
 
 #define BETWEEN(a, left, right) (a) >= (left) && (a) < (right)
 
+namespace PublicEnums {
+
+enum Directions { up, down, left, right };
+
+}
+
 class Graph
 {
 public:
-    enum Directions { up, down, left, right };
+//    enum Directions { up, down, left, right };
 
     struct TerrainPoint
     {

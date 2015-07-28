@@ -21,7 +21,8 @@ SOURCES += main.cpp\
     game_objects/bonus.cpp \
     game_objects/abstract_game_object.cpp \
     maze_generator/generator.cpp \
-    game_objects/character.cpp
+    game_objects/character.cpp \
+    game_objects/checkpoint.cpp
 
 HEADERS  += widget.h \
     game_model/graph.h \
@@ -30,7 +31,8 @@ HEADERS  += widget.h \
     game_objects/abstract_game_object.h \
     maze_generator/generator.h \
     game_objects/character.h \
-    game_objects/bonus.h
+    game_objects/bonus.h \
+    game_objects/checkpoint.h
 
 RESOURCES += \
     textures.qrc
