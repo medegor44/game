@@ -7,13 +7,9 @@ GameScene::GameScene(QObject *parent)
 
     loadTextures();
 
+    initGameObjects();
+
     setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
-
-    player = new Character(QPoint(0, 0), pixels, graph);
-    addItem(player);
-
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocusItem(player);
 
     connect(&gameLoop, SIGNAL(timeout()), this, SLOT(updateGame()));
 }
@@ -90,4 +86,22 @@ void GameScene::loadTextures()
     landscapeTextures[Terrain_t::wall] = QPixmap(":/textures/bricks.png");
     landscapeTextures[Terrain_t::field] = QPixmap(":/textures/grass.png");
     landscapeTextures[Terrain_t::hill] = QPixmap(":/textures/hill.png");
+}
+
+void GameScene::initGameObjects()
+{
+    player = new Character(QPoint(0, 0), pixels, graph);
+    player->setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocusItem(player);
+
+    addItem(player);
+    addItem(new Bonus(Bonus::BonusType::live, QPoint(9, 0), 30));
+
+    addItem(new Checkpoint(graph->getStartPos(), pixels,
+                           Checkpoint::CheckpointType::start,
+                           PublicEnums::Directions::down));
+
+    addItem(new Checkpoint(graph->getEndPos(), pixels,
+                           Checkpoint::CheckpointType::end,
+                           PublicEnums::Directions::up));
 }

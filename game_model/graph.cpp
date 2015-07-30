@@ -18,6 +18,10 @@ Graph::Graph(int w, int h)
 }
 
 // Инициализация модели графа
+
+
+
+
 void Graph::initBoard()
 {
     for(int y = 0; y < height; y++) { // Обход по OY

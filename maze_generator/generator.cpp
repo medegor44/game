@@ -15,8 +15,6 @@ Generator::Generator(int w, int h)
 
     cellCount = cellsWidth * cellsHeight;
 
-//    visited.resize(cellCount);
-
     initMatrix();
 }
 
@@ -30,14 +28,12 @@ void Generator::initMatrix()
             } else
                 maze[i][j] = wall;
         }
-
-/*  for(int i = 0; i < height; i++)
-        for(int j = (i % 2 == 0 ? 1 : 0); j < width; j += (i % 2 == 0 ? 2 : 1))
-            maze[i][j] = wall; */
 }
 
 void Generator::makeIndefinite()
 {
+    const double ratio = 1.0 / 5.0;
+
     std::default_random_engine random(std::chrono::system_clock::now()
                                       .time_since_epoch().count());
 
@@ -94,10 +90,7 @@ void Generator::start(bool indefinite)
             current = stack.pop();
     }
 
-    //print();
-
    if(indefinite) makeIndefinite();
-//   std::cout << "Done.";
 }
 
 Graph *Generator::getGraph()

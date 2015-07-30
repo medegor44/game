@@ -32,6 +32,7 @@ protected:
 
     void newGraph();
     void loadTextures();
+    void initGameObjects();
 
     void drawBackground(QPainter *painter, const QRectF &rect);
 

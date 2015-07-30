@@ -22,8 +22,6 @@ enum Directions { up, down, left, right };
 class Graph
 {
 public:
-//    enum Directions { up, down, left, right };
-
     struct TerrainPoint
     {
         enum TerrainType { wall, field, hill };
@@ -62,8 +60,15 @@ public:
 
     int getWidth() const
     { return width; }
+
     int getHeight() const
     { return height; }
+
+    QPoint getStartPos() const
+    { return startPos; }
+
+    QPoint getEndPos() const
+    { return endPos; }
 };
 
 #endif // GRAPH

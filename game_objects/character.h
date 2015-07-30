@@ -24,8 +24,8 @@ public:
 private:
     PublicEnums::Directions currentDirecton;
     Graph *gameBoard;
-    Checkpoint *startPoint;
-    Checkpoint *currentCheckpoint;
+    Checkpoint *startPoint = nullptr;
+    Checkpoint *currentCheckpoint = nullptr;
 
     int lives;
 

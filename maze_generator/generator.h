@@ -24,8 +24,6 @@ private:
 
     QVector <QPoint> points;
 
-    const double ratio = 1.0 / 5.0;
-
     int **maze;
 
     void initMatrix();
@@ -43,10 +41,13 @@ public:
     Graph *getGraph();
 
     void start(bool indefinite = false);
+
     int getWidth() const
     { return width; }
+
     int getHeight() const
     { return height; }
+
     void print();
 };
 

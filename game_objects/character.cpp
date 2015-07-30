@@ -45,6 +45,7 @@ void Character::move()
                                   boardPos.y() * pixelsWidth));
 
     qDebug() << "Lives =" << lives;
+    qDebug() << boardPos;
 }
 
 void Character::checkCollisionsWithWall()
@@ -52,10 +53,12 @@ void Character::checkCollisionsWithWall()
     if(gameBoard->getType(boardPos) == Graph::TerrainPoint::TerrainType::wall) {
         if((--lives) == 0) {
             boardPos = startPoint->getBoardPos();
+            currentDirecton = startPoint->getStartDirection();
             lives = 3;
         }
 
         boardPos = currentCheckpoint->getBoardPos();
+        currentDirecton = currentCheckpoint->getStartDirection();
     }
 }
 
@@ -81,7 +84,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
     if(!chpoint->isVisited()) {
         switch (chpoint->getType()) {
         case Checkpoint::CheckpointType::start:
-            startPoint = chpoint;
+            startPoint = currentCheckpoint = chpoint;
             break;
         case Checkpoint::CheckpointType::common:
             currentCheckpoint = chpoint;
