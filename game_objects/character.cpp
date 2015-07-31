@@ -7,12 +7,6 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
 {
     lives = 3;
 
-    // Начальная позиция и 0 чекпоинт совпадают
-    //currentCheckpoint = startPoint = bp;
-
-    // Значение по умолчанию (временно)
-    currentDirecton = Directions::down;
-
     this->gameBoard = gameBoard;
     setObjectName("Character");
 }
@@ -22,27 +16,31 @@ void Character::move()
     checkCollisionsWithItems();
 
     // Перемещение в указанном направлении
-    switch (currentDirecton) {
+    switch (directionQueue.first()) {
     case Directions::up:
-        boardPos.ry()--;
+        boundingRect_m.moveTop(boundingRect_m.top()-step);
         break;
     case Directions::down:
-        boardPos.ry()++;
+        boundingRect_m.moveTop(boundingRect_m.top()+step);
         break;
     case Directions::left:
-        boardPos.rx()--;
+        boundingRect_m.moveLeft(boundingRect_m.left() - step);
         break;
     case Directions::right:
-        boardPos.rx()++;
+        boundingRect_m.moveLeft(boundingRect_m.left() + step);
         break;
     }
 
-    // Проверить столкновения со стеной и другими элементами нв сцене
-    checkCollisionsWithWall();
+    if(boundingRect_m.x() % pixelsWidth == 0 &&
+            boundingRect_m.y() % pixelsWidth == 0 && directionQueue.size() > 1)
+        directionQueue.pop_front();
 
     // Сдвинуть прямоугольник объекта на новую позицию
-    boundingRect_m.moveTo(QPointF(boardPos.x() * pixelsWidth,
-                                  boardPos.y() * pixelsWidth));
+    boardPos.rx() = boundingRect_m.center().x() / pixelsWidth;
+    boardPos.ry() = boundingRect_m.center().y() / pixelsWidth;
+
+    // Проверить столкновения со стеной и другими элементами нв сцене
+    checkCollisionsWithWall();
 
     qDebug() << "Lives =" << lives;
     qDebug() << boardPos;
@@ -50,16 +48,17 @@ void Character::move()
 
 void Character::checkCollisionsWithWall()
 {
-    if(gameBoard->getType(boardPos) == Graph::TerrainPoint::TerrainType::wall) {
-        if((--lives) == 0) {
-            boardPos = startPoint->getBoardPos();
-            currentDirecton = startPoint->getStartDirection();
-            lives = 3;
-        }
+    if(gameBoard->getType(boardPos) != Graph::TerrainPoint::TerrainType::wall)
+        return;
 
-        boardPos = currentCheckpoint->getBoardPos();
-        currentDirecton = currentCheckpoint->getStartDirection();
-    }
+    directionQueue.clear();
+    boardPos = currentCheckpoint->getBoardPos();
+
+    if((--lives) == 0)
+        lives = 3;
+
+    boundingRect_m.moveTo(boardPos);
+    directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)->getStartDirection());
 }
 
 void Character::collideWithBonus(AbstractGameObject *obj)
@@ -85,6 +84,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
         switch (chpoint->getType()) {
         case Checkpoint::CheckpointType::start:
             startPoint = currentCheckpoint = chpoint;
+            directionQueue.push_back(chpoint->getStartDirection());
             break;
         case Checkpoint::CheckpointType::common:
             currentCheckpoint = chpoint;
@@ -131,13 +131,15 @@ void Character::keyPressEvent(QKeyEvent *event)
     QString text = event->text();
 
     if(text == tr("w") || text == tr("W"))
-        currentDirecton = Directions::up;
+//        currentDirecton = Directions::up;
+        directionQueue.push_back(Directions::up);
     else if(text == tr("s") || text == tr("S"))
-        currentDirecton = Directions::down;
+//        currentDirecton = Directions::down;
+        directionQueue.push_back(Directions::down);
     else if(text == tr("a") || text == tr("A"))
-        currentDirecton = Directions::left;
+//        currentDirecton = Directions::left;
+        directionQueue.push_back(Directions::left);
     else if(text == tr("d") || text == tr("D"))
-        currentDirecton = Directions::right;
-
-//    qDebug() << "Lives" << lives;
+//        currentDirecton = Directions::right;
+        directionQueue.push_back(Directions::right);
 }

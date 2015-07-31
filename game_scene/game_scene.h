@@ -20,9 +20,9 @@ class GameScene : public QGraphicsScene
     Q_OBJECT
 
 protected:
+    const int pixels = 30;
     int graphWidth = 21;
     int graphHeight = 21;
-    int pixels = 30;
 
     Graph *graph;
     Character *player;
@@ -31,6 +31,7 @@ protected:
     QPixmap landscapeTextures[Graph::TerrainPoint::maxTypes];
 
     void newGraph();
+    void clearScene();
     void loadTextures();
     void initGameObjects();
 

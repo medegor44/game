@@ -65,13 +65,15 @@ void GameScene::newGraph()
     if(gameLoop.isActive())
         return; // Ничего не делать, если игра запущена
 
+    clearScene(); // Очистить сцену от старых объектов
+
     Generator generator(graphWidth, graphHeight);
     generator.start();
 
     delete graph;
     graph = generator.getGraph();
 
-    player->setGameBoard(graph);
+    initGameObjects();
 
     /* Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
        ширины и высоты */
@@ -79,6 +81,14 @@ void GameScene::newGraph()
                        generator.getHeight() * pixels);
 
     update();
+}
+
+void GameScene::clearScene()
+{
+    QList <QGraphicsItem *> gameObjects = items();
+
+    for(QGraphicsItem *obj : gameObjects)
+        removeItem(obj);
 }
 
 void GameScene::loadTextures()
@@ -90,12 +100,10 @@ void GameScene::loadTextures()
 
 void GameScene::initGameObjects()
 {
-    player = new Character(QPoint(0, 0), pixels, graph);
+    player = new Character(graph->getStartPos(), pixels, graph);
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     setFocusItem(player);
-
     addItem(player);
-    addItem(new Bonus(Bonus::BonusType::live, QPoint(9, 0), 30));
 
     addItem(new Checkpoint(graph->getStartPos(), pixels,
                            Checkpoint::CheckpointType::start,

@@ -3,7 +3,7 @@
 
 #include <QKeyEvent>
 #include <QGraphicsScene>
-
+#include <QQueue>
 
 #ifndef GRAPH
    #include "../game_model/graph.h"
@@ -17,16 +17,17 @@ class Character : public AbstractGameObject
 {
     Q_OBJECT
 
-public:
-    /*enum Directions
-    { up, down, left, right };*/
-
 private:
     PublicEnums::Directions currentDirecton;
+
     Graph *gameBoard;
+
     Checkpoint *startPoint = nullptr;
     Checkpoint *currentCheckpoint = nullptr;
 
+    QQueue <PublicEnums::Directions> directionQueue;
+
+    const int step = 15;
     int lives;
 
     void checkCollisionsWithWall();

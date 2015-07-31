@@ -14,7 +14,7 @@ class AbstractGameObject : public QGraphicsObject
 protected:
     QPixmap texture;
     QPoint boardPos;
-    QRectF boundingRect_m;
+    QRect boundingRect_m;
     int pixelsWidth;
 
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
@@ -24,7 +24,7 @@ public:
     AbstractGameObject(QPoint bp, int pixels);
 
     QRectF boundingRect() const
-    { return boundingRect_m; }
+    { return QRectF(boundingRect_m); }
 
     ~AbstractGameObject(){}
     QPoint getBoardPos() const
