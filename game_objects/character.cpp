@@ -18,10 +18,10 @@ void Character::move()
     // Перемещение в указанном направлении
     switch (directionQueue.first()) {
     case Directions::up:
-        boundingRect_m.moveTop(boundingRect_m.top()-step);
+        boundingRect_m.moveTop(boundingRect_m.top() - step);
         break;
     case Directions::down:
-        boundingRect_m.moveTop(boundingRect_m.top()+step);
+        boundingRect_m.moveTop(boundingRect_m.top() + step);
         break;
     case Directions::left:
         boundingRect_m.moveLeft(boundingRect_m.left() - step);
@@ -48,7 +48,36 @@ void Character::move()
 
 void Character::checkCollisionsWithWall()
 {
-    if(gameBoard->getType(boardPos) != Graph::TerrainPoint::TerrainType::wall)
+    QPoint collidePoint;
+
+    /* Выбор точки, относительно которой будет происходить проверка столкновения
+       со стеной */
+    switch (directionQueue.first()) {
+    case Directions::up:
+        collidePoint.rx() = boundingRect_m.x() + (boundingRect_m.width() / 2);
+        collidePoint.ry() = boundingRect_m.y();
+        break;
+    case Directions::down:
+        collidePoint.rx() = boundingRect_m.x() + (boundingRect_m.width() / 2);
+        collidePoint.ry() = boundingRect_m.y() + boundingRect_m.height();
+        break;
+    case Directions::left:
+        collidePoint.rx() = boundingRect_m.x();
+        collidePoint.ry() = boundingRect_m.y() + (boundingRect_m.height() / 2);
+        break;
+    case Directions::right:
+        collidePoint.rx() = boundingRect_m.x() + boundingRect_m.width();
+        collidePoint.ry() = boundingRect_m.y() + (boundingRect_m.height() / 2);
+        break;
+    }
+
+    // При отрицательных координатах однозначный выход за границы.
+    if(collidePoint.x() >= 0 && collidePoint.y() >= 0) {
+        collidePoint.rx() /= pixelsWidth;
+        collidePoint.ry() /= pixelsWidth;
+    }
+
+    if(gameBoard->getType(collidePoint) != Graph::TerrainPoint::TerrainType::wall)
         return;
 
     directionQueue.clear();

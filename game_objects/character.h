@@ -27,7 +27,7 @@ private:
 
     QQueue <PublicEnums::Directions> directionQueue;
 
-    const int step = 15;
+    const int step = 5;
     int lives;
 
     void checkCollisionsWithWall();

@@ -32,7 +32,7 @@ void Generator::initMatrix()
 
 void Generator::makeIndefinite()
 {
-    const double ratio = 1.0 / 5.0;
+    const double ratio = 1.0 / 6.0;
 
     std::default_random_engine random(std::chrono::system_clock::now()
                                       .time_since_epoch().count());

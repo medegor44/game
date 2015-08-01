@@ -39,7 +39,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        gameLoop.start(120);
+        gameLoop.start(40);
         break;
     case Qt::Key_G:
         newGraph();
@@ -68,7 +68,7 @@ void GameScene::newGraph()
     clearScene(); // Очистить сцену от старых объектов
 
     Generator generator(graphWidth, graphHeight);
-    generator.start();
+    generator.start(true);
 
     delete graph;
     graph = generator.getGraph();
