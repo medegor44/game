@@ -11,8 +11,11 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     setObjectName("Character");
 }
 
-void Character::move()
+void Character::advance(int phase)
 {
+    if(phase == 0)
+        return;
+
     checkCollisionsWithItems();
 
     // Перемещение в указанном направлении

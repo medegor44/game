@@ -11,7 +11,7 @@ GameScene::GameScene(QObject *parent)
 
     setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
 
-    connect(&gameLoop, SIGNAL(timeout()), this, SLOT(updateGame()));
+    connect(&gameLoop, SIGNAL(timeout()), this, SLOT(advance()));
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -39,7 +39,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        gameLoop.start(40);
+        gameLoop.start(120);
         break;
     case Qt::Key_G:
         newGraph();
@@ -54,10 +54,9 @@ void GameScene::keyPressEvent(QKeyEvent *event)
 
 void GameScene::updateGame()
 {
-    player->move();
+//    player->move();
 
     update();
-    gameLoop.start();
 }
 
 void GameScene::newGraph()
@@ -100,11 +99,6 @@ void GameScene::loadTextures()
 
 void GameScene::initGameObjects()
 {
-    player = new Character(graph->getStartPos(), pixels, graph);
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocusItem(player);
-    addItem(player);
-
     addItem(new Checkpoint(graph->getStartPos(), pixels,
                            Checkpoint::CheckpointType::start,
                            PublicEnums::Directions::down));
@@ -112,4 +106,9 @@ void GameScene::initGameObjects()
     addItem(new Checkpoint(graph->getEndPos(), pixels,
                            Checkpoint::CheckpointType::end,
                            PublicEnums::Directions::up));
+
+    player = new Character(graph->getStartPos(), pixels, graph);
+    player->setFlag(QGraphicsItem::ItemIsFocusable);
+    setFocusItem(player);
+    addItem(player);
 }

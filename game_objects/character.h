@@ -34,17 +34,16 @@ private:
     void checkCollisionsWithItems();
 
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
+                       QWidget *widget);
 
-    void keyPressEvent(QKeyEvent *event);
+    virtual void keyPressEvent(QKeyEvent *event);
 
-public slots:
-    void move();
 
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
 
+    virtual void advance(int phase);
     void setCurrentDirecton(PublicEnums::Directions dir)
     { currentDirecton = dir; }
 
