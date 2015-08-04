@@ -112,6 +112,9 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
 {
     Checkpoint *chpoint = dynamic_cast <Checkpoint *> (obj);
 
+    if((pos() - chpoint->pos()).manhattanLength() > 5)
+        return;
+
     if(!chpoint->isVisited()) {
         switch (chpoint->getType()) {
         case Checkpoint::CheckpointType::start:
@@ -123,7 +126,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
             break;
         case Checkpoint::CheckpointType::end:
             qDebug() << "********* Level complete! *********";
-            // Сообщить об успешном заврешении уровня
+            emit finished();
             break;
         }
 

@@ -21,12 +21,11 @@ void Checkpoint::visit()
     texture = QPixmap(":/textures/checkpoint_vis.png");
 }
 
-void Checkpoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget)
+void Checkpoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
-    painter->drawPixmap(boundingRect().toRect(), texture);
+    painter->drawPixmap(QRect(pos().x() * pixelsWidth,
+                              pos().y() * pixelsWidth,
+                              pixelsWidth, pixelsWidth), texture);
 }
 
 

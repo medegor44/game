@@ -10,8 +10,7 @@ public:
     { start, common, end };
 
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
 private:
     CheckpointType type;

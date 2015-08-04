@@ -4,15 +4,16 @@ GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent)
 {
     graph = new Graph(graphWidth, graphHeight);
+    setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
+    setItemIndexMethod(QGraphicsScene::NoIndex);
 
     loadTextures();
 
     initGameObjects();
 
-    setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
-    setItemIndexMethod(QGraphicsScene::NoIndex);
 
     connect(&gameLoop, SIGNAL(timeout()), this, SLOT(advance()));
+    connect(player, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -60,6 +61,14 @@ void GameScene::updateGame()
     update();
 }
 
+void GameScene::finished()
+{
+    int dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
+    QMessageBox::information(nullptr, "Statistic", QString("Perfect dist = %1")
+                             .arg(dist));
+    gameLoop.stop();
+}
+
 void GameScene::newGraph()
 {
     if(gameLoop.isActive())
@@ -68,7 +77,7 @@ void GameScene::newGraph()
     clearScene(); // Очистить сцену от старых объектов
 
     Generator generator(graphWidth, graphHeight);
-    generator.start(true);
+    generator.start();
 
     delete graph;
     graph = generator.getGraph();

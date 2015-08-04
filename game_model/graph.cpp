@@ -18,10 +18,6 @@ Graph::Graph(int w, int h)
 }
 
 // Инициализация модели графа
-
-
-
-
 void Graph::initBoard()
 {
     for(int y = 0; y < height; y++) { // Обход по OY
@@ -107,7 +103,6 @@ void Graph::setCellType(QPoint p, TerrainPoint::TerrainType t)
     }
 }
 // ### Конец функций получения и установки типа для точки ###
-
 Matrix Graph::toAdejecencyMatrix()
 {
     Matrix adjecencyMatrix;
@@ -155,7 +150,7 @@ int Graph::getDist(QPoint begin, QPoint end)
                "In int Graph::getDist(QPoint begin, QPoint end);",
                "Positions is out of range.");
 
-    GraphAlgoritms::Algorithm a(toAdejecencyMatrix());
+    GraphAlgoritms::Dijkstra a(toAdejecencyMatrix());
     a.findTheWay(begin.y() * width + begin.x());
 
     return a.getDistTo(end.y() * width + end.x());

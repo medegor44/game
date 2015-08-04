@@ -37,6 +37,8 @@ protected:
 
     virtual void keyPressEvent(QKeyEvent *event);
 
+signals:
+    void finished();
 
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
@@ -48,9 +50,9 @@ public:
     void setGameBoard(Graph *value)
     { gameBoard = value; }
 
-    ~Character(){}
     void collideWithBonus(AbstractGameObject *obj);
     void collideWithCheckpoint(AbstractGameObject *obj);
+    ~Character(){}
 };
 
 #endif // CHARACTER

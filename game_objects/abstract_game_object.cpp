@@ -10,8 +10,8 @@ AbstractGameObject::AbstractGameObject(QPoint bp, int pixels)
     boardPos = bp;
     pixelsWidth = pixels;
 
+    setPos(bp.x() * pixels, bp.y() * pixels);
+
     // Игровой объект занимает только 1 клетку поля
-    boundingRect_m = QRect(boardPos.x() * pixelsWidth,
-                            boardPos.y() * pixelsWidth,
-                            pixelsWidth, pixelsWidth);
+    boundingRect_m = QRect(0, 0, pixelsWidth, pixelsWidth);
 }

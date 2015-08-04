@@ -2,13 +2,13 @@
 
 using namespace GraphAlgoritms;
 
-Algorithm::Algorithm(Matrix m)
+Dijkstra::Dijkstra(Matrix m)
 {
     adjacencyMatrix = m;
     initAlgorithm();
 }
 
-void Algorithm::initAlgorithm()
+void Dijkstra::initAlgorithm()
 {
     qDebug() << "Init";
     qDebug() << "Matrix size =" << adjacencyMatrix.size();
@@ -23,7 +23,7 @@ void Algorithm::initAlgorithm()
     }
 }
 
-void Algorithm::decreaseKey(int point, int newKey)
+void Dijkstra::decreaseKey(int point, int newKey)
 {
     if(point >= adjacencyMatrix.size()) {
         qDebug() << "Error! Point is out of range!";
@@ -33,7 +33,7 @@ void Algorithm::decreaseKey(int point, int newKey)
     dist[point] = newKey;
 }
 
-int Algorithm::getMin()
+int Dijkstra::getMin()
 {
     int min = INT_MAX;
     int minIndex = -1;
@@ -47,7 +47,7 @@ int Algorithm::getMin()
     return minIndex;
 }
 
-void Algorithm::findTheWay(int start)
+void Dijkstra::findTheWay(int start)
 {
     qDebug() << "In Algoryth::findTheWay();";
     qDebug() << "Start pos =" << start;
@@ -70,7 +70,7 @@ void Algorithm::findTheWay(int start)
     qDebug() << "Ways were fining";
 }
 
-int Algorithm::getDistTo(int n)
+int Dijkstra::getDistTo(int n)
 {
     if(dist[n] == INT_MAX)
         throw QString("Way to %1 not found.").arg(n);

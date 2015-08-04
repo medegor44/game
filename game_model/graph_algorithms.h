@@ -9,7 +9,7 @@ typedef QVector <QVector <int>> Matrix;
 
 namespace GraphAlgoritms {
 
-class Algorithm
+class Dijkstra
 {
 private:
     Matrix adjacencyMatrix;
@@ -23,8 +23,8 @@ private:
     void initAlgorithm();
 
 public:
-    Algorithm(){}
-    Algorithm(Matrix m);
+    Dijkstra(){}
+    Dijkstra(Matrix m);
 
     void setAdjacencyMatrix(Matrix m)
     { adjacencyMatrix = m; initAlgorithm(); }

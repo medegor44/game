@@ -6,6 +6,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPixmap>
 #include <QTimer>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -41,6 +42,7 @@ protected:
 
 protected slots:
     void updateGame();
+    void finished();
 
 public:
     GameScene(QObject *parent);
