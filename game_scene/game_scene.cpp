@@ -10,6 +10,7 @@ GameScene::GameScene(QObject *parent)
     initGameObjects();
 
     setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
+    setItemIndexMethod(QGraphicsScene::NoIndex);
 
     connect(&gameLoop, SIGNAL(timeout()), this, SLOT(advance()));
 }
@@ -39,7 +40,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        gameLoop.start(120);
+        gameLoop.start(60);
         break;
     case Qt::Key_G:
         newGraph();

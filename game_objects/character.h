@@ -5,9 +5,7 @@
 #include <QGraphicsScene>
 #include <QQueue>
 
-#ifndef GRAPH
-   #include "../game_model/graph.h"
-#endif
+#include "../game_model/graph.h"
 
 #include "abstract_game_object.h"
 #include "bonus.h"

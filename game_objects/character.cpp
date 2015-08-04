@@ -21,26 +21,25 @@ void Character::advance(int phase)
     // Перемещение в указанном направлении
     switch (directionQueue.first()) {
     case Directions::up:
-        boundingRect_m.moveTop(boundingRect_m.top() - step);
+        setY(y() - step);
         break;
     case Directions::down:
-        boundingRect_m.moveTop(boundingRect_m.top() + step);
+        setY(y() + step);
         break;
     case Directions::left:
-        boundingRect_m.moveLeft(boundingRect_m.left() - step);
+        setX(x() - step);
         break;
     case Directions::right:
-        boundingRect_m.moveLeft(boundingRect_m.left() + step);
+        setX(x() + step);
         break;
     }
 
-    if(boundingRect_m.x() % pixelsWidth == 0 &&
-            boundingRect_m.y() % pixelsWidth == 0 && directionQueue.size() > 1)
+    if(int(x()) % pixelsWidth == 0 && int(y()) % pixelsWidth == 0 && directionQueue.size() > 1)
         directionQueue.pop_front();
 
     // Сдвинуть прямоугольник объекта на новую позицию
-    boardPos.rx() = boundingRect_m.center().x() / pixelsWidth;
-    boardPos.ry() = boundingRect_m.center().y() / pixelsWidth;
+    boardPos.rx() = int(x()) / pixelsWidth;
+    boardPos.ry() = int(y()) / pixelsWidth;
 
     // Проверить столкновения со стеной и другими элементами нв сцене
     checkCollisionsWithWall();
@@ -57,24 +56,25 @@ void Character::checkCollisionsWithWall()
        со стеной */
     switch (directionQueue.first()) {
     case Directions::up:
-        collidePoint.rx() = boundingRect_m.x() + (boundingRect_m.width() / 2);
-        collidePoint.ry() = boundingRect_m.y();
+        collidePoint.rx() = x() + (boundingRect_m.width() / 2);
+        collidePoint.ry() = y();
         break;
     case Directions::down:
-        collidePoint.rx() = boundingRect_m.x() + (boundingRect_m.width() / 2);
-        collidePoint.ry() = boundingRect_m.y() + boundingRect_m.height();
+        collidePoint.rx() = x() + (boundingRect_m.width() / 2);
+        collidePoint.ry() = y() + boundingRect_m.height();
         break;
     case Directions::left:
-        collidePoint.rx() = boundingRect_m.x();
-        collidePoint.ry() = boundingRect_m.y() + (boundingRect_m.height() / 2);
+        collidePoint.rx() = x();
+        collidePoint.ry() = y() + (boundingRect_m.height() / 2);
         break;
     case Directions::right:
-        collidePoint.rx() = boundingRect_m.x() + boundingRect_m.width();
-        collidePoint.ry() = boundingRect_m.y() + (boundingRect_m.height() / 2);
+        collidePoint.rx() = x() + boundingRect_m.width();
+        collidePoint.ry() = y() + (boundingRect_m.height() / 2);
         break;
     }
 
-    // При отрицательных координатах однозначный выход за границы.
+    /* При неотрицательных координатах необходимо определить,
+     * есть выход за границы или нет */
     if(collidePoint.x() >= 0 && collidePoint.y() >= 0) {
         collidePoint.rx() /= pixelsWidth;
         collidePoint.ry() /= pixelsWidth;
@@ -89,7 +89,7 @@ void Character::checkCollisionsWithWall()
     if((--lives) == 0)
         lives = 3;
 
-    boundingRect_m.moveTo(boardPos);
+    setPos(boardPos.x() * pixelsWidth, boardPos.y() * pixelsWidth);
     directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)->getStartDirection());
 }
 
