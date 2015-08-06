@@ -23,9 +23,7 @@ void Checkpoint::visit()
 
 void Checkpoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    painter->drawPixmap(QRect(pos().x() * pixelsWidth,
-                              pos().y() * pixelsWidth,
-                              pixelsWidth, pixelsWidth), texture);
+    painter->drawPixmap(boundingRect().toRect(), texture);
 }
 
 

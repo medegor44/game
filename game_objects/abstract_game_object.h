@@ -24,7 +24,7 @@ public:
     AbstractGameObject(QPoint bp, int pixels);
 
     QRectF boundingRect() const
-    { return QRectF(boundingRect_m); }
+    { return QRectF(0, 0, pixelsWidth, pixelsWidth); }
 
     ~AbstractGameObject(){}
     QPoint getBoardPos() const

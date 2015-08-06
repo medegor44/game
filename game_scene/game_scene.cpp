@@ -11,6 +11,7 @@ GameScene::GameScene(QObject *parent)
 
     initGameObjects();
 
+    qDebug() << sceneRect();
 
     connect(&gameLoop, SIGNAL(timeout()), this, SLOT(advance()));
     connect(player, SIGNAL(finished()), this, SLOT(finished()));
@@ -52,6 +53,12 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     }
 
     QGraphicsScene::keyPressEvent(event);
+}
+
+void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
+{
+    qDebug() << event->scenePos();
+    QGraphicsScene::mousePressEvent(event);
 }
 
 void GameScene::updateGame()
@@ -111,6 +118,10 @@ void GameScene::initGameObjects()
 {
     addItem(new Checkpoint(graph->getStartPos(), pixels,
                            Checkpoint::CheckpointType::start,
+                           PublicEnums::Directions::down));
+
+    addItem(new Checkpoint(QPoint(1, 2), pixels,
+                           Checkpoint::CheckpointType::common,
                            PublicEnums::Directions::down));
 
     addItem(new Checkpoint(graph->getEndPos(), pixels,

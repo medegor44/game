@@ -19,7 +19,7 @@ private:
 
 public:
     Checkpoint(QPoint bp, int pixels, CheckpointType t,
-               PublicEnums::Directions dir);
+               PublicEnums::Directions dir = PublicEnums::down);
 
     void visit();
 

@@ -43,38 +43,37 @@ void Character::advance(int phase)
 
     // Проверить столкновения со стеной и другими элементами нв сцене
     checkCollisionsWithWall();
-
-    qDebug() << "Lives =" << lives;
-    qDebug() << boardPos;
 }
 
 void Character::checkCollisionsWithWall()
 {
     QPoint collidePoint;
+    QPointF posAtScene = mapToScene(pos());
 
     /* Выбор точки, относительно которой будет происходить проверка столкновения
        со стеной */
     switch (directionQueue.first()) {
     case Directions::up:
-        collidePoint.rx() = x() + (boundingRect_m.width() / 2);
+        collidePoint.rx() =  x() + (boundingRect().width() / 2);
         collidePoint.ry() = y();
         break;
     case Directions::down:
-        collidePoint.rx() = x() + (boundingRect_m.width() / 2);
-        collidePoint.ry() = y() + boundingRect_m.height();
+        collidePoint.rx() = x() + (boundingRect().width() / 2);
+        collidePoint.ry() = y() + boundingRect().height();
         break;
     case Directions::left:
         collidePoint.rx() = x();
-        collidePoint.ry() = y() + (boundingRect_m.height() / 2);
+        collidePoint.ry() = y() + (boundingRect().height() / 2);
         break;
     case Directions::right:
-        collidePoint.rx() = x() + boundingRect_m.width();
-        collidePoint.ry() = y() + (boundingRect_m.height() / 2);
+        collidePoint.rx() = x() + boundingRect().width();
+        collidePoint.ry() = y() + (boundingRect().height() / 2);
         break;
     }
 
     /* При неотрицательных координатах необходимо определить,
      * есть выход за границы или нет */
+
     if(collidePoint.x() >= 0 && collidePoint.y() >= 0) {
         collidePoint.rx() /= pixelsWidth;
         collidePoint.ry() /= pixelsWidth;
@@ -86,11 +85,12 @@ void Character::checkCollisionsWithWall()
     directionQueue.clear();
     boardPos = currentCheckpoint->getBoardPos();
 
-    if((--lives) == 0)
+    lives--;
+    directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)->getStartDirection());
+    if(lives == 0)
         lives = 3;
 
     setPos(boardPos.x() * pixelsWidth, boardPos.y() * pixelsWidth);
-    directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)->getStartDirection());
 }
 
 void Character::collideWithBonus(AbstractGameObject *obj)
@@ -112,10 +112,11 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
 {
     Checkpoint *chpoint = dynamic_cast <Checkpoint *> (obj);
 
-    if((pos() - chpoint->pos()).manhattanLength() > 5)
+    if((pos() - chpoint->pos()).manhattanLength() >= 10)
         return;
 
     if(!chpoint->isVisited()) {
+        qDebug() << "Checkpoint!";
         switch (chpoint->getType()) {
         case Checkpoint::CheckpointType::start:
             startPoint = currentCheckpoint = chpoint;

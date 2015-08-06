@@ -40,6 +40,8 @@ protected:
 
     void keyPressEvent(QKeyEvent *event);
 
+    void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
 protected slots:
     void updateGame();
     void finished();
