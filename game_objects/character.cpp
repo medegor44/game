@@ -6,6 +6,7 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     : AbstractGameObject(bp, pixels)
 {
     lives = 3;
+    summaryWayCost = 0;
 
     this->gameBoard = gameBoard;
     setObjectName("Character");
@@ -16,7 +17,12 @@ void Character::advance(int phase)
     if(phase == 0)
         return;
 
+    // Проверить столкновения со стеной и другими элементами нв сцене
     checkCollisionsWithItems();
+    checkCollisionsWithWall();
+
+    // Обновить стоимость пройденного пути
+    updateCost();
 
     // Перемещение в указанном направлении
     switch (directionQueue.first()) {
@@ -34,21 +40,22 @@ void Character::advance(int phase)
         break;
     }
 
-    if(int(x()) % pixelsWidth == 0 && int(y()) % pixelsWidth == 0 && directionQueue.size() > 1)
-        directionQueue.pop_front();
+    if(int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0 && directionQueue.size() > 1)
+            directionQueue.pop_front();
 
-    // Сдвинуть прямоугольник объекта на новую позицию
-    boardPos.rx() = int(x()) / pixelsWidth;
-    boardPos.ry() = int(y()) / pixelsWidth;
+    // Сдвинуть объект на новыую позицию относительно игрового поля
+    boardPos.rx() = int(x()) / cellWidth;
+    boardPos.ry() = int(y()) / cellWidth;
+}
 
-    // Проверить столкновения со стеной и другими элементами нв сцене
-    checkCollisionsWithWall();
+int Character::getSummaryWayCost() const
+{
+    return summaryWayCost;
 }
 
 void Character::checkCollisionsWithWall()
 {
     QPoint collidePoint;
-    QPointF posAtScene = mapToScene(pos());
 
     /* Выбор точки, относительно которой будет происходить проверка столкновения
        со стеной */
@@ -75,22 +82,23 @@ void Character::checkCollisionsWithWall()
      * есть выход за границы или нет */
 
     if(collidePoint.x() >= 0 && collidePoint.y() >= 0) {
-        collidePoint.rx() /= pixelsWidth;
-        collidePoint.ry() /= pixelsWidth;
+        collidePoint.rx() /= cellWidth;
+        collidePoint.ry() /= cellWidth;
     }
 
-    if(gameBoard->getType(collidePoint) != Graph::TerrainPoint::TerrainType::wall)
+    if(gameBoard->getType(collidePoint) != Graph::TerrainType::wall)
         return;
 
     directionQueue.clear();
     boardPos = currentCheckpoint->getBoardPos();
 
     lives--;
-    directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)->getStartDirection());
+    directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)
+                             ->getStartDirection());
     if(lives == 0)
         lives = 3;
 
-    setPos(boardPos.x() * pixelsWidth, boardPos.y() * pixelsWidth);
+    setPos(boardPos.x() * cellWidth, boardPos.y() * cellWidth);
 }
 
 void Character::collideWithBonus(AbstractGameObject *obj)
@@ -126,13 +134,26 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
             currentCheckpoint = chpoint;
             break;
         case Checkpoint::CheckpointType::end:
-            qDebug() << "********* Level complete! *********";
             emit finished();
+            qDebug() << "********* Level complete! *********";
             break;
         }
 
         chpoint->visit();
     }
+}
+
+void Character::updateCost()
+{
+    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0)
+        return;
+
+    int cost = gameBoard->getCost(boardPos, directionQueue.first());
+
+    if(cost == -1)
+        return;
+
+    summaryWayCost += cost;
 }
 
 void Character::checkCollisionsWithItems()
@@ -153,12 +174,8 @@ void Character::checkCollisionsWithItems()
     }
 }
 
-void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                      QWidget *widget)
+void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    Q_UNUSED(option);
-    Q_UNUSED(widget);
-
     painter->fillRect(boundingRect(), Qt::blue);
 }
 
@@ -167,15 +184,11 @@ void Character::keyPressEvent(QKeyEvent *event)
     QString text = event->text();
 
     if(text == tr("w") || text == tr("W"))
-//        currentDirecton = Directions::up;
         directionQueue.push_back(Directions::up);
     else if(text == tr("s") || text == tr("S"))
-//        currentDirecton = Directions::down;
         directionQueue.push_back(Directions::down);
     else if(text == tr("a") || text == tr("A"))
-//        currentDirecton = Directions::left;
         directionQueue.push_back(Directions::left);
     else if(text == tr("d") || text == tr("D"))
-//        currentDirecton = Directions::right;
         directionQueue.push_back(Directions::right);
 }

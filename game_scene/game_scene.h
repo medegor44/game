@@ -14,7 +14,7 @@
 #include "../maze_generator/generator.h"
 #include "game_objects/character.h"
 
-typedef Graph::TerrainPoint::TerrainType Terrain_t;
+typedef Graph::TerrainType Terrain_t;
 
 class GameScene : public QGraphicsScene
 {
@@ -29,7 +29,7 @@ protected:
     Character *player;
 
     QTimer gameLoop;
-    QPixmap landscapeTextures[Graph::TerrainPoint::maxTypes];
+    QPixmap landscapeTextures[Graph::maxTypes];
 
     void newGraph();
     void clearScene();

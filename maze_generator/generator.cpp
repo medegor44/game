@@ -100,8 +100,8 @@ Graph *Generator::getGraph()
     for(int y = 0; y < height; y++)
         for(int x = 0; x < width; x++) {
             graph->setCellType(QPoint(x, y), maze[y][x] == wall ?
-                                   Graph::TerrainPoint::TerrainType::wall
-                                 : Graph::TerrainPoint::TerrainType::field);
+                                   Graph::TerrainType::wall
+                                 : Graph::TerrainType::field);
         }
 
     return graph; // Удалением старой версии занимается игрова сцена

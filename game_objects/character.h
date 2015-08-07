@@ -25,34 +25,31 @@ private:
 
     QQueue <PublicEnums::Directions> directionQueue;
 
-    const int step = 5;
+    const int step = 3;
     int lives;
+    int summaryWayCost;
 
     void checkCollisionsWithWall();
     void checkCollisionsWithItems();
 
+    void collideWithBonus(AbstractGameObject *obj);
+    void collideWithCheckpoint(AbstractGameObject *obj);
+    void updateCost();
+
 protected:
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-                       QWidget *widget);
+    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
     virtual void keyPressEvent(QKeyEvent *event);
 
 signals:
+    // Сообщение о столкновении с конечным чекпоинтом
     void finished();
 
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
 
     virtual void advance(int phase);
-    void setCurrentDirecton(PublicEnums::Directions dir)
-    { currentDirecton = dir; }
-
-    void setGameBoard(Graph *value)
-    { gameBoard = value; }
-
-    void collideWithBonus(AbstractGameObject *obj);
-    void collideWithCheckpoint(AbstractGameObject *obj);
-    ~Character(){}
+    int getSummaryWayCost() const;
 };
 
 #endif // CHARACTER

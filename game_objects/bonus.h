@@ -15,7 +15,7 @@ private:
     bool active_m = true;
 
 protected:
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
 
 public:
     Bonus(BonusType t, QPoint bp, int pixels);
@@ -28,8 +28,6 @@ public:
 
     BonusType getType() const
     { return type; }
-
-    ~Bonus(){}
 };
 
 

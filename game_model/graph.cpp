@@ -15,54 +15,77 @@ Graph::Graph(int w, int h)
     endPos = QPoint(w-1, h-1);
 
     initBoard();
+    qDebug() << "End of construct";
 }
 
 // Инициализация модели графа
+void Graph::initEdgesFor(int x, int y)
+{
+    if(x < 0 || y < 0 || x >= width || y >= height)
+        return;
+
+    if(y - 1 >= 0)
+        edges.push_back(QLine(x, y, x, y-1));
+    if(y + 1 < height)
+        edges.push_back(QLine(x, y, x, y+1));
+    if(x - 1 >= 0)
+        edges.push_back(QLine(x, y, x-1, y));
+    if(x + 1 < width)
+        edges.push_back(QLine(x, y, x+1, y));
+}
+
 void Graph::initBoard()
 {
-    for(int y = 0; y < height; y++) { // Обход по OY
-        QVector <TerrainPoint> v;
+    board.resize(height);
+    for(QVector <TerrainType> &v : board)
+        v.resize(width);
 
-        for(int x = 0; x < width; x++) { // Обход по OX
-            QVector <TerrainPoint::TerrainType> edges(4);
-
-            edges[Directions::up] = y - 1 >= 0 ? TerrainPoint::field : TerrainPoint::wall;
-            edges[Directions::down] = y + 1 < height ? TerrainPoint::field : TerrainPoint::wall;
-            edges[Directions::left] = x - 1 >= 0 ? TerrainPoint::field : TerrainPoint::wall;
-            edges[Directions::right] = x + 1 < width ? TerrainPoint::field : TerrainPoint::wall;
-
-            TerrainPoint tp;
-            tp.edges = edges;
-            tp.type = TerrainPoint::field;
-
-            v.push_back(tp);
+    for(int y = 0; y < height; ++y) {
+        for(int x = 0; x < width; ++x) {
+            board[y][x] = TerrainType::field;
+            initEdgesFor(x, y);
         }
-
-        board.push_back(v);
     }
 }
 
 // ### Получение и установка типа точки с координатами p ###
-Graph::TerrainPoint::TerrainType Graph::getType(QPoint p) const
+Graph::TerrainType Graph::getType(QPoint p) const
 {
-    /*Q_ASSERT_X(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height),
-               "In TerrainType Graph::getType(QPoint p);",
-               "Incorrect coordinates.");*/
-
+    // Все, что выходит за пределами игровго поля - стена
     if(!(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height)))
-        return TerrainPoint::TerrainType::wall;
+        return TerrainType::wall;
 
-    return board[p.y()][p.x()].type;
+    return board[p.y()][p.x()];
 }
 
-void Graph::setCellType(QPoint p, TerrainPoint::TerrainType t)
+void Graph::setCellType(QPoint p, TerrainType t)
 {
     Q_ASSERT_X(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height),
                "In void Graph::setCellType(QPoint p, TerrainType t)",
                "Incorrect coordinates.");
 
-    QVector <TerrainPoint::TerrainType> &v = board[p.y()][p.x()].edges;
-    board[p.y()][p.x()].type = t;
+    if(board[p.y()][p.x()] == t)
+        // Не имеет смысла текущее значение изменять на такое же
+        return;
+
+    if(t == TerrainType::wall) { // Установка стены
+        // Удалить все пути, ведущие в эту клетку и исходящие из нее
+        for(QLine l : edges) {
+            if(l.p1() == p || l.p2() == p)
+                edges.removeOne(l);
+        }
+    } else {
+        if(board[p.y()][p.x()] == TerrainType::wall) {
+            // Если текщий тип стена, то восстанавливаем пути
+            initEdgesFor(p.x(), p.y());
+            initEdgesFor(p.x() - 1, p.y());
+            initEdgesFor(p.x() + 1, p.y());
+            initEdgesFor(p.x(), p.y() - 1);
+            initEdgesFor(p.x(), p.y() + 1);
+        }
+    }
+    board[p.y()][p.x()] = t;
+/*
     TerrainPoint::TerrainType nType; // Тип соседней клетки
 
     if(p.y() - 1 >= 0) { // Сосед сверху
@@ -101,27 +124,58 @@ void Graph::setCellType(QPoint p, TerrainPoint::TerrainType t)
 
         board[p.y()][p.x() + 1].edges[Directions::left] = v[Directions::right] = newType;
     }
+
+    if(t == TerrainPoint::wall)
+        for(TerrainPoint::TerrainType &type : v)
+            type = t;
+*/
 }
+
+int Graph::getCost(QPoint from, PublicEnums::Directions dir)
+{
+    TerrainType t;
+
+    // Выбор стоимости точки, в сторону которой происходит движение
+    switch (dir) {
+    case PublicEnums::down:
+        t = getType(QPoint(from.x(), from.y() + 1));
+        break;
+    case PublicEnums::up:
+        t = getType(QPoint(from.x(), from.y() - 1));
+        break;
+    case PublicEnums::left:
+        t = getType(QPoint(from.x() - 1, from.y()));
+        break;
+    case PublicEnums::right:
+        t = getType(QPoint(from.x() + 1, from.y()));
+        break;
+    }
+
+    if(t == TerrainType::wall) // При встрече со стеной персонаж погибает
+        return -1;
+    else // В остальных случаях возвращаем максимальное значение
+        return qMax(t, board[from.y()][from.x()]);
+}
+
 // ### Конец функций получения и установки типа для точки ###
 Matrix Graph::toAdejecencyMatrix()
 {
-    Matrix adjecencyMatrix;
+    Matrix adjecencyMatrix(width * height);
+    for(QVector <int> &v : adjecencyMatrix)
+        v.resize(width * height);
 
-    for(int y = 0; y < board.size(); y++)
-        for(int x = 0; x < board.size(); x++) {
-            QVector <int> v(width * height);
+    for(auto i = edges.begin(); i != edges.end(); ++i) {
+        int first = i->y1() * width + i->x1();
+        int second = i->y2() * width + i->x2();
 
-            if(board[y][x].edges[Directions::up])
-                v[(y-1) * width + x] = board[y][x].edges[Directions::up];
-            if(board[y][x].edges[Directions::down])
-                v[(y+1) * width + x] = board[y][x].edges[Directions::down];
-            if(board[y][x].edges[Directions::left])
-                v[y * width + x - 1] = board[y][x].edges[Directions::left];
-            if(board[y][x].edges[Directions::right])
-                v[y * width + x + 1] = board[y][x].edges[Directions::right];
+        int tFirst = board[i->y1()][i->x1()];
+        int tSecond = board[i->y2()][i->x2()];
 
-            adjecencyMatrix.push_back(v);
-        }
+        if(tFirst == TerrainType::wall || tSecond == TerrainType::wall)
+            adjecencyMatrix[first][second] = TerrainType::wall;
+        else
+            adjecencyMatrix[first][second] = qMax(tFirst, tSecond);
+    }
 
     return adjecencyMatrix;
 }
@@ -166,9 +220,9 @@ void Graph::printBoard()
 
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
-            out << "type = " << board[y][x].type << "  ";
-            for(TerrainPoint::TerrainType t : board[y][x].edges)
-                out << t << ' ';
+            out << "type = " << board[y][x] << "  ";
+//            for(TerrainPoint::TerrainType t : board[y][x].edges)
+//                out << t << ' ';
             out << '\t';
         }
         out << '\n';

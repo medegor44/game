@@ -13,20 +13,21 @@ class AbstractGameObject : public QGraphicsObject
 
 protected:
     QPixmap texture;
+    // Текстура игрового объекта
     QPoint boardPos;
-    QRect boundingRect_m;
-    int pixelsWidth;
+    // Позиция относительно игрового поля
 
-    void paint(QPainter *painter, const QStyleOptionGraphicsItem *option,
-               QWidget *widget) = 0;
+    int cellWidth;
+    // Ширина клетки
+
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) = 0;
 
 public:
     AbstractGameObject(QPoint bp, int pixels);
 
     QRectF boundingRect() const
-    { return QRectF(0, 0, pixelsWidth, pixelsWidth); }
+    { return QRectF(0, 0, cellWidth, cellWidth); }
 
-    ~AbstractGameObject(){}
     QPoint getBoardPos() const
     { return boardPos; }
 };

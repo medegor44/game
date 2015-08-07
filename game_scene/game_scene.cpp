@@ -14,25 +14,28 @@ GameScene::GameScene(QObject *parent)
     qDebug() << sceneRect();
 
     connect(&gameLoop, SIGNAL(timeout()), this, SLOT(advance()));
-    connect(player, SIGNAL(finished()), this, SLOT(finished()));
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    Q_UNUSED(rect);
+/*    qDebug() << "In void GameScene::drawBackground(QPainter *, const QRrectF &)"
+             << "rect =" << rect<< '\n'
+             << "rect's position at game board"
+             << int(rect.x()) / pixels << int(rect.y()) / pixels;
 
     for(int i = sceneRect().x(); i <= graph->getWidth() * pixels; i += pixels)
         painter->drawLine(i, 0, i, graph->getHeight() * pixels);
 
     for(int i = sceneRect().y(); i <= graph->getHeight() * pixels; i += pixels)
         painter->drawLine(0, i, graph->getWidth() * pixels, i);
-
+*/
     for(int y = 0; y < graph->getHeight(); y++) {
         for(int x = 0; x < graph->getWidth(); x++) {
-            painter->drawPixmap(x * pixels+1,
-                                y * pixels+1,
-                                pixels-1, pixels-1,
-                                landscapeTextures[graph->getType(QPoint(x, y))]);
+            QRectF irect = QRectF(x * pixels, y * pixels, pixels, pixels);
+            if(rect.intersects(irect)) {
+                painter->drawPixmap(irect.toRect(),
+                                    landscapeTextures[graph->getType(QPoint(x, y))]);
+            }
         }
     }
 }
@@ -42,7 +45,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        gameLoop.start(60);
+        gameLoop.start(1000/45);
         break;
     case Qt::Key_G:
         newGraph();
@@ -71,8 +74,11 @@ void GameScene::updateGame()
 void GameScene::finished()
 {
     int dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
-    QMessageBox::information(nullptr, "Statistic", QString("Perfect dist = %1")
-                             .arg(dist));
+
+    QString infoStr = "Perfect dist = %1\nYou dist = %2";
+    QMessageBox::information(nullptr, "Statistic", infoStr
+                             .arg(dist)
+                             .arg(player->getSummaryWayCost()));
     gameLoop.stop();
 }
 
@@ -132,4 +138,6 @@ void GameScene::initGameObjects()
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     setFocusItem(player);
     addItem(player);
+
+    connect(player, SIGNAL(finished()), this, SLOT(finished()));
 }
