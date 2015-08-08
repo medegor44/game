@@ -15,13 +15,13 @@ Graph::Graph(int w, int h)
     endPos = QPoint(w-1, h-1);
 
     initBoard();
-    qDebug() << "End of construct";
 }
 
 // Инициализация модели графа
 void Graph::initEdgesFor(int x, int y)
 {
     if(x < 0 || y < 0 || x >= width || y >= height)
+        // Если точка выходит за гранцы поля, то ее следует просто игнорировать
         return;
 
     if(y - 1 >= 0)
@@ -36,12 +36,14 @@ void Graph::initEdgesFor(int x, int y)
 
 void Graph::initBoard()
 {
+    // Изменить размеры матрицы на соответствующие
     board.resize(height);
     for(QVector <TerrainType> &v : board)
         v.resize(width);
 
     for(int y = 0; y < height; ++y) {
         for(int x = 0; x < width; ++x) {
+            // По умолчанию все клетки имеют тип "поле"
             board[y][x] = TerrainType::field;
             initEdgesFor(x, y);
         }
@@ -68,7 +70,7 @@ void Graph::setCellType(QPoint p, TerrainType t)
         // Не имеет смысла текущее значение изменять на такое же
         return;
 
-    if(t == TerrainType::wall) { // Установка стены
+    if(t == TerrainType::wall) { // Новый тип стена
         // Удалить все пути, ведущие в эту клетку и исходящие из нее
         for(QLine l : edges) {
             if(l.p1() == p || l.p2() == p)
@@ -76,7 +78,7 @@ void Graph::setCellType(QPoint p, TerrainType t)
         }
     } else {
         if(board[p.y()][p.x()] == TerrainType::wall) {
-            // Если текщий тип стена, то восстанавливаем пути
+            // Если текщий тип - стена, то восстанавливаем пути
             initEdgesFor(p.x(), p.y());
             initEdgesFor(p.x() - 1, p.y());
             initEdgesFor(p.x() + 1, p.y());
@@ -85,50 +87,6 @@ void Graph::setCellType(QPoint p, TerrainType t)
         }
     }
     board[p.y()][p.x()] = t;
-/*
-    TerrainPoint::TerrainType nType; // Тип соседней клетки
-
-    if(p.y() - 1 >= 0) { // Сосед сверху
-        nType = board[p.y() - 1][p.x()].type;
-        TerrainPoint::TerrainType newType = (nType == TerrainPoint::wall ||
-                                             t == TerrainPoint::wall ?
-                                                 TerrainPoint::wall :
-                                                 std::max(nType, t));
-
-        board[p.y() - 1][p.x()].edges[Directions::down] = v[Directions::up] = newType;
-    }
-    if(p.y() + 1 < height) { // Снизу
-        nType = board[p.y() + 1][p.x()].type;
-        TerrainPoint::TerrainType newType = (nType == TerrainPoint::wall ||
-                                             t == TerrainPoint::wall ?
-                                                 TerrainPoint::wall :
-                                                 std::max(nType, t));
-
-        board[p.y() + 1][p.x()].edges[Directions::up] = v[Directions::down] = newType;
-    }
-    if(p.x() - 1 >= 0) { // Слева
-        TerrainPoint::TerrainType newType = (nType == TerrainPoint::wall ||
-                                             t == TerrainPoint::wall ?
-                                                 TerrainPoint::wall :
-                                                 std::max(nType, t));
-
-        nType = board[p.y()][p.x() - 1].type;
-        board[p.y()][p.x() - 1].edges[Directions::right] = v[Directions::left] = newType;
-    }
-    if(p.x() + 1 < width) { // Справа
-        nType = board[p.y()][p.x() + 1].type;
-        TerrainPoint::TerrainType newType = (nType == TerrainPoint::wall ||
-                                             t == TerrainPoint::wall ?
-                                                 TerrainPoint::wall :
-                                                 std::max(nType, t));
-
-        board[p.y()][p.x() + 1].edges[Directions::left] = v[Directions::right] = newType;
-    }
-
-    if(t == TerrainPoint::wall)
-        for(TerrainPoint::TerrainType &type : v)
-            type = t;
-*/
 }
 
 int Graph::getCost(QPoint from, PublicEnums::Directions dir)
@@ -210,38 +168,3 @@ int Graph::getDist(QPoint begin, QPoint end)
     return a.getDistTo(end.y() * width + end.x());
 }
 
-// ### Отладочные методы ###
-void Graph::printBoard()
-{
-    QFile file("out.txt");
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
-
-    QTextStream out(&file);
-
-    for(int y = 0; y < height; y++) {
-        for(int x = 0; x < width; x++) {
-            out << "type = " << board[y][x] << "  ";
-//            for(TerrainPoint::TerrainType t : board[y][x].edges)
-//                out << t << ' ';
-            out << '\t';
-        }
-        out << '\n';
-    }
-}
-
-void Graph::printMatrix()
-{
-    Matrix m = toAdejecencyMatrix();
-    QFile file("out.txt");
-    file.open(QIODevice::WriteOnly | QIODevice::Text);
-
-    QTextStream out(&file);
-
-    for(int i = 0; i < m.size(); i++) {
-        for(int j = 0; j < m.size(); j++) {
-            out << m[i][j] << ' ';
-        }
-        out << '\n';
-    }
-}
-// ### Конец отладочных методов ###

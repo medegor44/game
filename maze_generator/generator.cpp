@@ -5,11 +5,15 @@ Generator::Generator(int w, int h)
     width = w % 2 == 0 ? w + 1 : w;
     height = h % 2 == 0 ? h + 1 : h;
 
-    maze = new int *[height];
+    maze.resize(height);
+    for(QVector<int> &v : maze)
+        v.resize(width);
+
+    /*maze = new int *[height];
 
     for(int i = 0; i < height; i++)
         maze[i] = new int[width];
-
+    */
     cellsWidth = width / 2 + 1;
     cellsHeight = height / 2 + 1;
 
@@ -46,11 +50,12 @@ void Generator::makeIndefinite()
         for(int k = 0; k < int(walls.size() * ratio); ) {
             int rWall = walls[random() % walls.size()];
 
-            if((i - 1 >= 0 && i < height && maze[i-1][rWall] != wall &&
-                                           maze[i+1][rWall] != wall) ||
-               (rWall - 1 >= 0 && rWall + 1 < width &&
-                                           maze[i][rWall-1] != wall &&
-                                           maze[i][rWall+1] != wall)) {
+            bool isHaveNeighboursV = getVNeighboursCount(QPoint(rWall, i)) == 2;
+            bool isHaveNeighboursH = getHNeighboursCount(QPoint(rWall, i)) == 2;
+
+            if(isHaveNeighboursH ^ isHaveNeighboursV) {
+                /* Важно! Истинность условия зависит только от истинности
+                 * 1 или 2 условий (операция исключающее или) */
                 maze[i][rWall] = visited;
                 k++;
             }
@@ -90,7 +95,8 @@ void Generator::start(bool indefinite)
             current = stack.pop();
     }
 
-   if(indefinite) makeIndefinite();
+    print();
+    if(indefinite) makeIndefinite();
 }
 
 Graph *Generator::getGraph()
@@ -127,6 +133,41 @@ QVector <QPoint> Generator::getNeighbours(QPoint cell)
         v.push_back(QPoint(x + 2, y));
 
     return v;
+}
+
+int Generator::getNeighboursCount(QPoint cell)
+{
+    int count = 0;
+    int left = cell.x() - 1;
+    int right = cell.x() + 1;
+    int up = cell.y() - 1;
+    int down = cell.y() + 1;
+
+
+
+    return count;
+}
+
+int Generator::getVNeighboursCount(QPoint cell)
+{
+    int count = 0;
+    if(cell.y() - 1 >= 0 && maze[cell.y() - 1][cell.x()] != wall)
+        count++;
+    if(cell.y() + 1 < height && maze[cell.y() + 1][cell.x()] != wall)
+        count++;
+
+    return count;
+}
+
+int Generator::getHNeighboursCount(QPoint cell)
+{
+    int count = 0;
+    if(cell.x() - 1 >= 0 && maze[cell.y()][cell.x() - 1] != wall)
+        count++;
+    if(cell.x() + 1 < width && maze[cell.y()][cell.x() + 1] != wall)
+        count++;
+
+    return count;
 }
 
 void Generator::print()

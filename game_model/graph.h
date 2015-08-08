@@ -22,8 +22,10 @@ enum Directions { up, down, left, right };
 class Graph
 {
 public:
+    // Тип клетки поля
     enum TerrainType { wall, field, hill };
     typedef QVector <QVector <TerrainType>> TerrainMatrix;
+    // Максимальное число типов
     static const int maxTypes = 3;
 
 private:
@@ -39,8 +41,9 @@ private:
     // Возможные пути на игровом поле
     QList <QLine> edges;
 
-    void initBoard();
-    Matrix toAdejecencyMatrix();
+    Matrix toAdejecencyMatrix(); // Преобразование в матрицу смежности
+    void initBoard(); // Инициализация матрицы поля
+    void initEdgesFor(int x, int y); // Инициализация путей для точки (x; y)
 
 public:
     Graph(int w, int h);
@@ -59,10 +62,6 @@ public:
     // Получить расстояние между точками begin и end
     int getDist(QPoint begin, QPoint end);
 
-    // Отладочные методы
-    void printBoard();
-    void printMatrix();
-
     int getWidth() const
     { return width; }
 
@@ -74,7 +73,6 @@ public:
 
     QPoint getEndPos() const
     { return endPos; }
-    void initEdgesFor(int x, int y);
 };
 
 #endif // GRAPH

@@ -43,14 +43,12 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 protected slots:
-    void updateGame();
     void finished();
 
 public:
     GameScene(QObject *parent);
 
-    ~GameScene()
-    { delete graph; }
+    ~GameScene();
 };
 
 #endif // GAME_SCENE

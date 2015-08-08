@@ -16,6 +16,7 @@ class Character : public AbstractGameObject
     Q_OBJECT
 
 private:
+    // текущее направление робота
     PublicEnums::Directions currentDirecton;
 
     Graph *gameBoard;

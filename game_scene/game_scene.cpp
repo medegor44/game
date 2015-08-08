@@ -64,13 +64,6 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mousePressEvent(event);
 }
 
-void GameScene::updateGame()
-{
-//    player->move();
-
-    update();
-}
-
 void GameScene::finished()
 {
     int dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
@@ -90,7 +83,7 @@ void GameScene::newGraph()
     clearScene(); // Очистить сцену от старых объектов
 
     Generator generator(graphWidth, graphHeight);
-    generator.start();
+    generator.start(true);
 
     delete graph;
     graph = generator.getGraph();
@@ -140,4 +133,10 @@ void GameScene::initGameObjects()
     addItem(player);
 
     connect(player, SIGNAL(finished()), this, SLOT(finished()));
+}
+
+GameScene::~GameScene()
+{
+    delete graph;
+    delete player;
 }

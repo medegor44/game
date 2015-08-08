@@ -24,16 +24,21 @@ private:
 
     QVector <QPoint> points;
 
-    int **maze;
+//    int **maze;
+    Matrix maze;
 
-    void initMatrix();
     // Инициализация матрицы, на которой будет создаваться лабиринт
+    void initMatrix();
 
-    void makeIndefinite();
     // Сделать лабиринт с неопределеннными путями
+    void makeIndefinite();
 
-    QVector <QPoint> getNeighbours(QPoint cell);
     // Получение соседей клетки с координатами cell
+    QVector<QPoint> getNeighbours(QPoint cell);
+    int getNeighboursCount(QPoint cell);
+
+    int getVNeighboursCount(QPoint cell);
+    int getHNeighboursCount(QPoint cell);
 
 public:
     Generator(int w, int h);
