@@ -36,7 +36,7 @@ void Generator::initMatrix()
 
 void Generator::makeIndefinite()
 {
-    const double ratio = 1.0 / 6.0;
+    const double ratio = 1.0 / 10.0;
 
     std::default_random_engine random(std::chrono::system_clock::now()
                                       .time_since_epoch().count());
@@ -50,10 +50,10 @@ void Generator::makeIndefinite()
         for(int k = 0; k < int(walls.size() * ratio); ) {
             int rWall = walls[random() % walls.size()];
 
-            bool isHaveNeighboursV = getVNeighboursCount(QPoint(rWall, i)) == 2;
-            bool isHaveNeighboursH = getHNeighboursCount(QPoint(rWall, i)) == 2;
+            int neiVCount = getVNeighboursCount(QPoint(rWall, i));
+            int neiHCount = getHNeighboursCount(QPoint(rWall, i));
 
-            if(isHaveNeighboursH ^ isHaveNeighboursV) {
+            if((neiVCount == 0 && neiHCount == 2) || (neiVCount == 2 && neiHCount == 0)) {
                 /* Важно! Истинность условия зависит только от истинности
                  * 1 или 2 условий (операция исключающее или) */
                 maze[i][rWall] = visited;

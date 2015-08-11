@@ -22,8 +22,8 @@ class GameScene : public QGraphicsScene
 
 protected:
     const int pixels = 30;
-    int graphWidth = 21;
-    int graphHeight = 21;
+    int graphWidth = 62;
+    int graphHeight = 33;
 
     Graph *graph;
     Character *player;
