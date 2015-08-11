@@ -37,9 +37,7 @@ protected:
     void initGameObjects();
 
     void drawBackground(QPainter *painter, const QRectF &rect);
-
     void keyPressEvent(QKeyEvent *event);
-
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 protected slots:
@@ -47,7 +45,6 @@ protected slots:
 
 public:
     GameScene(QObject *parent);
-
     ~GameScene();
 };
 
