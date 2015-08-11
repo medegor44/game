@@ -95,7 +95,7 @@ void Generator::start(bool indefinite)
             current = stack.pop();
     }
 
-    print();
+    //print();
     if(indefinite) makeIndefinite();
 }
 
@@ -133,19 +133,6 @@ QVector <QPoint> Generator::getNeighbours(QPoint cell)
         v.push_back(QPoint(x + 2, y));
 
     return v;
-}
-
-int Generator::getNeighboursCount(QPoint cell)
-{
-    int count = 0;
-    int left = cell.x() - 1;
-    int right = cell.x() + 1;
-    int up = cell.y() - 1;
-    int down = cell.y() + 1;
-
-
-
-    return count;
 }
 
 int Generator::getVNeighboursCount(QPoint cell)

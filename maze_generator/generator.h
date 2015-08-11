@@ -35,7 +35,6 @@ private:
 
     // Получение соседей клетки с координатами cell
     QVector<QPoint> getNeighbours(QPoint cell);
-    int getNeighboursCount(QPoint cell);
 
     int getVNeighboursCount(QPoint cell);
     int getHNeighboursCount(QPoint cell);
