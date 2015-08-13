@@ -1,6 +1,6 @@
 #include "character.h"
 
-using PublicEnums::Directions;
+using CommonThings::Directions;
 
 Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     : AbstractGameObject(bp, pixels)

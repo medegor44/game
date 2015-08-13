@@ -17,14 +17,14 @@ class Character : public AbstractGameObject
 
 private:
     // текущее направление робота
-    PublicEnums::Directions currentDirecton;
+    CommonThings::Directions currentDirecton;
 
     Graph *gameBoard;
 
     Checkpoint *startPoint = nullptr;
     Checkpoint *currentCheckpoint = nullptr;
 
-    QQueue <PublicEnums::Directions> directionQueue;
+    QQueue <CommonThings::Directions> directionQueue;
 
     const int step = 3;
     int lives;

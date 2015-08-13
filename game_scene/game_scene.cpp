@@ -117,15 +117,15 @@ void GameScene::initGameObjects()
 {
     addItem(new Checkpoint(graph->getStartPos(), pixels,
                            Checkpoint::CheckpointType::start,
-                           PublicEnums::Directions::down));
+                           CommonThings::Directions::down, graph));
 
-    addItem(new Checkpoint(QPoint(1, 2), pixels,
-                           Checkpoint::CheckpointType::common,
-                           PublicEnums::Directions::down));
+//    addItem(new Checkpoint(QPoint(1, 2), pixels,
+//                           Checkpoint::CheckpointType::common,
+//                           CommonThings::Directions::down));
 
     addItem(new Checkpoint(graph->getEndPos(), pixels,
                            Checkpoint::CheckpointType::end,
-                           PublicEnums::Directions::up));
+                           CommonThings::Directions::up));
 
     player = new Character(graph->getStartPos(), pixels, graph);
     player->setFlag(QGraphicsItem::ItemIsFocusable);

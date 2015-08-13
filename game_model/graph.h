@@ -13,7 +13,7 @@
 
 #define BETWEEN(a, left, right) (a) >= (left) && (a) < (right)
 
-namespace PublicEnums {
+namespace CommonThings {
 
 enum Directions { up, down, left, right };
 
@@ -54,7 +54,7 @@ public:
     void setCellType(QPoint p, TerrainType t);
 
     // Получить стоимость перемещения в клеку поля, распололженную в направлении dir
-    int getCost(QPoint from, PublicEnums::Directions dir);
+    int getCost(QPoint from, CommonThings::Directions dir);
 
     // Проверить правильно ли создано поле
     bool checkBoard(QPoint begin, QPoint end);

@@ -1,6 +1,6 @@
 #include "graph.h"
 
-using PublicEnums::Directions;
+using CommonThings::Directions;
 
 Graph::Graph(int w, int h)
 {
@@ -89,22 +89,22 @@ void Graph::setCellType(QPoint p, TerrainType t)
     board[p.y()][p.x()] = t;
 }
 
-int Graph::getCost(QPoint from, PublicEnums::Directions dir)
+int Graph::getCost(QPoint from, CommonThings::Directions dir)
 {
     TerrainType t;
 
     // Выбор стоимости точки, в сторону которой происходит движение
     switch (dir) {
-    case PublicEnums::down:
+    case CommonThings::down:
         t = getType(QPoint(from.x(), from.y() + 1));
         break;
-    case PublicEnums::up:
+    case CommonThings::up:
         t = getType(QPoint(from.x(), from.y() - 1));
         break;
-    case PublicEnums::left:
+    case CommonThings::left:
         t = getType(QPoint(from.x() - 1, from.y()));
         break;
-    case PublicEnums::right:
+    case CommonThings::right:
         t = getType(QPoint(from.x() + 1, from.y()));
         break;
     }
