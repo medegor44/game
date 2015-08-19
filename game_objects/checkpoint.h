@@ -2,7 +2,7 @@
 #define CHECKPOINT
 
 #include "abstract_game_object.h"
-
+#include <QTime>
 class Checkpoint : public AbstractGameObject
 {
 public:

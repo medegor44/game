@@ -23,10 +23,10 @@ class Graph
 {
 public:
     // Тип клетки поля
-    enum TerrainType { wall, field, hill };
+    enum TerrainType { wall, field, hill, sand, swamp, mountain };
     typedef QVector <QVector <TerrainType>> TerrainMatrix;
     // Максимальное число типов
-    static const int maxTypes = 3;
+    static const int maxTypes = 6;
 
 private:
     int width;
@@ -39,7 +39,7 @@ private:
     // Игровое поле
     TerrainMatrix board;
     // Возможные пути на игровом поле
-    QList <QLine> edges;
+    QList<QLine> edges;
 
     Matrix toAdejecencyMatrix(); // Преобразование в матрицу смежности
     void initBoard(); // Инициализация матрицы поля

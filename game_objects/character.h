@@ -4,6 +4,7 @@
 #include <QKeyEvent>
 #include <QGraphicsScene>
 #include <QQueue>
+#include <QDebug>
 
 #include "../game_model/graph.h"
 

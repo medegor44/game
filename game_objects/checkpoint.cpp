@@ -37,9 +37,9 @@ QVector<Directions> Checkpoint::getDirVector(Graph *g)
         for(int x = boardPos.x() - 1; x <= boardPos.x() + 1; x++) {
             QPoint neighbourPoint = QPoint(x, y);
             if(g->getType(neighbourPoint) != Graph::wall) {
-                if(boardPos - neighbourPoint == QPoint(0, -1))
+                if(boardPos - neighbourPoint == QPoint(0, 1))
                     dirV.push_back(Directions::up);
-                else if(boardPos - neighbourPoint == QPoint(0, 1))
+                else if(boardPos - neighbourPoint == QPoint(0, -1))
                     dirV.push_back(Directions::down);
                 else if(boardPos - neighbourPoint == QPoint(-1, 0))
                     dirV.push_back(Directions::right);
@@ -55,6 +55,7 @@ void Checkpoint::setRandomStartDirection(Graph *g)
 {
     // Получаем вектор возможных направлений
     QVector<Directions> dirV = getDirVector(g);
+    qsrand(QTime(0, 0).msecsTo(QTime::currentTime()));
 
     // Выбираем случайное направление
     startDirection = dirV[qrand() % dirV.size()];

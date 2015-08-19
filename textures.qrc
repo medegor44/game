@@ -6,5 +6,8 @@
         <file>textures/live.png</file>
         <file>textures/checkpoint.png</file>
         <file>textures/checkpoint_vis.png</file>
+        <file>textures/sand.png</file>
+        <file>textures/stone.png</file>
+        <file>textures/swamp.png</file>
     </qresource>
 </RCC>

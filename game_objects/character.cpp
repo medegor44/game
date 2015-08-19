@@ -152,8 +152,11 @@ void Character::updateCost()
 
     if(cost == -1)
         return;
-
     summaryWayCost += cost;
+
+    qDebug() << "Cost at" << boardPos
+             << "is" << cost << '\n'
+             << "summaryCost =" << summaryWayCost;
 }
 
 void Character::checkCollisionsWithItems()
