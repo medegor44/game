@@ -9,7 +9,7 @@ GameScene::GameScene(QObject *parent)
     graph->setCellType(QPoint(0, 1), Terrain_t::hill);
     graph->setCellType(QPoint(0, 2), Terrain_t::sand);
     graph->setCellType(QPoint(0, 3), Terrain_t::swamp);
-    graph->setCellType(QPoint(0, 4), Terrain_t::mountain);
+//    graph->setCellType(QPoint(0, 4), Terrain_t::mountain);
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
@@ -63,7 +63,7 @@ void GameScene::finished()
 {
     int dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
 
-    QString infoStr = "Perfect dist = %1\nYou dist = %2";
+    QString infoStr = "Perfect dist = %1\nYour dist = %2";
     QMessageBox::information(nullptr, "Statistic", infoStr
                              .arg(dist)
                              .arg(player->getSummaryWayCost()));
@@ -106,7 +106,6 @@ void GameScene::loadTextures()
     landscapeTextures[Terrain_t::wall] = QPixmap(":/textures/bricks.png");
     landscapeTextures[Terrain_t::field] = QPixmap(":/textures/grass.png");
     landscapeTextures[Terrain_t::hill] = QPixmap(":/textures/hill.png");
-    landscapeTextures[Terrain_t::mountain] = QPixmap(":/textures/stone.png");
     landscapeTextures[Terrain_t::sand] = QPixmap(":/textures/sand.png");
     landscapeTextures[Terrain_t::swamp] = QPixmap(":/textures/swamp.png");
 }
@@ -116,10 +115,6 @@ void GameScene::initGameObjects()
     addItem(new Checkpoint(graph->getStartPos(), pixels,
                            Checkpoint::CheckpointType::start,
                            graph, CommonThings::Directions::down));
-
-//    addItem(new Checkpoint(QPoint(1, 2), pixels,
-//                           Checkpoint::CheckpointType::common,
-//                           CommonThings::Directions::down));
 
     addItem(new Checkpoint(graph->getEndPos(), pixels,
                            Checkpoint::CheckpointType::end, graph,

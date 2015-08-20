@@ -9,11 +9,6 @@ Generator::Generator(int w, int h)
     for(QVector<int> &v : maze)
         v.resize(width);
 
-    /*maze = new int *[height];
-
-    for(int i = 0; i < height; i++)
-        maze[i] = new int[width];
-    */
     cellsWidth = width / 2 + 1;
     cellsHeight = height / 2 + 1;
 
@@ -95,25 +90,66 @@ void Generator::start(bool indefinite)
             current = stack.pop();
     }
 
-    //print();
-    if(indefinite) makeIndefinite();
+    if(indefinite)
+        makeIndefinite();
+
+    createGraph(); // создать граф
 }
 
-Graph *Generator::getGraph()
+void Generator::createGraph()
 {
-    Graph *graph = new Graph(width, height);
+    graph = new Graph(width, height);
+
+    generateLandscape();
+
+    for(int y = 0; y < height; y++)
+        for(int x = 0; x < width; x++)
+            if(maze[y][x] == wall)
+                graph->setCellType(QPoint(x, y), Graph::wall);
+}
+
+void Generator::generateLandscape()
+{
+    std::default_random_engine random(std::chrono::system_clock::now()
+                                      .time_since_epoch().count());
 
     for(int y = 0; y < height; y++)
         for(int x = 0; x < width; x++) {
-            graph->setCellType(QPoint(x, y), maze[y][x] == wall ?
-                                   Graph::TerrainType::wall
-                                 : Graph::TerrainType::field);
+            Graph::TerrainType t;
+
+            t = Graph::TerrainType(random() % (Graph::maxTypes - 1) + 1);
+            graph->setCellType(QPoint(x, y), t);
         }
 
+    smoothLandscape(); // Сделать ланшафт более "размытым"
+}
+
+void Generator::smoothLandscape()
+{
+    for(int y = 0; y < height; y++) {
+        for(int x = 0; x < width; x++) {
+            int neighbourValues = 0;
+            int neighbourCount = 0;
+
+            for(int i = y - 1; i <= y + 1; i++)
+                for(int j = x - 1; j <= x + 1; j++)
+                    if(BETWEEN(j, 0, width) && BETWEEN(i, 0,  height)
+                            && i != y && j != x) {
+                        neighbourValues += graph->getType(QPoint(j, i));
+                        neighbourCount++;
+                    }
+
+            graph->setCellType(QPoint(x, y), Graph::TerrainType(neighbourValues / neighbourCount));
+        }
+    }
+}
+
+Graph *Generator::getGraph() const
+{
     return graph; // Удалением старой версии занимается игрова сцена
 }
 
-QVector <QPoint> Generator::getNeighbours(QPoint cell)
+QVector<QPoint> Generator::getNeighbours(QPoint cell)
 {
     QVector <QPoint> v;
 

@@ -32,7 +32,8 @@ HEADERS  += widget.h \
     maze_generator/generator.h \
     game_objects/character.h \
     game_objects/bonus.h \
-    game_objects/checkpoint.h
+    game_objects/checkpoint.h \
+    common_things.h
 
 RESOURCES += \
     textures.qrc

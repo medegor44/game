@@ -21,6 +21,7 @@ void Checkpoint::visit()
 {
     visited = true;
 
+    // Сменить текстуру непосещенного чекпоинта на текстуру посещенного
     texture = QPixmap(":/textures/checkpoint_vis.png");
 }
 
@@ -31,6 +32,7 @@ void Checkpoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWid
 
 QVector<Directions> Checkpoint::getDirVector(Graph *g)
 {
+    // Вектор возможных направлений
     QVector<Directions> dirV;
 
     for(int y = boardPos.y() - 1; y <= boardPos.y() + 1; y++)
@@ -57,7 +59,7 @@ void Checkpoint::setRandomStartDirection(Graph *g)
     QVector<Directions> dirV = getDirVector(g);
     qsrand(QTime(0, 0).msecsTo(QTime::currentTime()));
 
-    // Выбираем случайное направление
+    // Выбираем случайное стартовое направление
     startDirection = dirV[qrand() % dirV.size()];
 }
 

@@ -18,20 +18,31 @@ class Generator
 private:
     enum state { wall, free_cell, visited };
 
-    int width, cellsWidth;
-    int height, cellsHeight;
+    int width;
+    int cellsWidth;
+    int height;
+    int cellsHeight;
     int cellCount;
 
     QVector <QPoint> points;
 
-//    int **maze;
     Matrix maze;
+    Graph *graph = nullptr;
 
     // Инициализация матрицы, на которой будет создаваться лабиринт
     void initMatrix();
 
     // Сделать лабиринт с неопределеннными путями
     void makeIndefinite();
+
+    // Создать граф
+    void createGraph();
+
+    // Сгенерировать ландшафт
+    void generateLandscape();
+
+    // Размыть получившийся ландшафт
+    void smoothLandscape();
 
     // Получение соседей клетки с координатами cell
     QVector<QPoint> getNeighbours(QPoint cell);
@@ -42,7 +53,7 @@ private:
 public:
     Generator(int w, int h);
 
-    Graph *getGraph();
+    Graph *getGraph() const;
 
     void start(bool indefinite = false);
 

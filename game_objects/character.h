@@ -7,6 +7,7 @@
 #include <QDebug>
 
 #include "../game_model/graph.h"
+#include "../common_things.h"
 
 #include "abstract_game_object.h"
 #include "bonus.h"
@@ -22,7 +23,7 @@ private:
 
     Graph *gameBoard;
 
-    Checkpoint *startPoint = nullptr;
+    Checkpoint *startCheckoint = nullptr;
     Checkpoint *currentCheckpoint = nullptr;
 
     QQueue <CommonThings::Directions> directionQueue;

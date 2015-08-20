@@ -10,23 +10,18 @@
 #include <algorithm>
 
 #include "graph_algorithms.h"
+#include "../common_things.h"
 
 #define BETWEEN(a, left, right) (a) >= (left) && (a) < (right)
-
-namespace CommonThings {
-
-enum Directions { up, down, left, right };
-
-}
 
 class Graph
 {
 public:
     // Тип клетки поля
-    enum TerrainType { wall, field, hill, sand, swamp, mountain };
+    enum TerrainType { wall, field, hill, sand, swamp/*, mountain*/ };
     typedef QVector <QVector <TerrainType>> TerrainMatrix;
     // Максимальное число типов
-    static const int maxTypes = 6;
+    static const int maxTypes = 5;
 
 private:
     int width;

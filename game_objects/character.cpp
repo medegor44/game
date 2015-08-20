@@ -40,8 +40,10 @@ void Character::advance(int phase)
         break;
     }
 
+    // Персонаж полностью зашел на клетку поля
     if(int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0 && directionQueue.size() > 1)
-            directionQueue.pop_front();
+        // Вытолкнуть из очереди старое направление
+        directionQueue.pop_front();
 
     // Сдвинуть объект на новыую позицию относительно игрового поля
     boardPos.rx() = int(x()) / cellWidth;
@@ -87,23 +89,29 @@ void Character::checkCollisionsWithWall()
     }
 
     if(gameBoard->getType(collidePoint) != Graph::TerrainType::wall)
+        // В точке возможного столкновения нет стены
         return;
 
-    directionQueue.clear();
-    boardPos = currentCheckpoint->getBoardPos();
+    // В противном случае:
 
+    directionQueue.clear();
     lives--;
-    directionQueue.push_back((lives == 0 ? startPoint : currentCheckpoint)
+
+    /* При нулевом значении жизней возвращаемся на стартовый чекпоинт,
+     * в противном случае на последний посещенный. */
+    boardPos = (lives == 0 ? startCheckoint : currentCheckpoint)->getBoardPos();
+    directionQueue.push_back((lives == 0 ? startCheckoint : currentCheckpoint)
                              ->getStartDirection());
-    if(lives == 0)
+    if(lives == 0) // Восстанавливаем начальное значение жизней
         lives = 3;
 
+    // Устанавливаем персонажа на новую позицию
     setPos(boardPos.x() * cellWidth, boardPos.y() * cellWidth);
 }
 
 void Character::collideWithBonus(AbstractGameObject *obj)
 {
-    Bonus *bonus = dynamic_cast <Bonus *> (obj);
+    Bonus *bonus = dynamic_cast<Bonus *> (obj);
     if(bonus->active()) {
         switch (bonus->getType()) {
         case Bonus::BonusType::live:
@@ -118,16 +126,19 @@ void Character::collideWithBonus(AbstractGameObject *obj)
 
 void Character::collideWithCheckpoint(AbstractGameObject *obj)
 {
-    Checkpoint *chpoint = dynamic_cast <Checkpoint *> (obj);
+    Checkpoint *chpoint = dynamic_cast<Checkpoint *> (obj);
 
     if((pos() - chpoint->pos()).manhattanLength() >= 10)
+        // Недостаточно близко подошли к чекпоинту
         return;
 
     if(!chpoint->isVisited()) {
+        // Чекпоинт не посещен
         qDebug() << "Checkpoint!";
         switch (chpoint->getType()) {
         case Checkpoint::CheckpointType::start:
-            startPoint = currentCheckpoint = chpoint;
+            startCheckoint = currentCheckpoint = chpoint;
+            // Протолкнуть в очередь начальное направление стартового чекпоинта
             directionQueue.push_back(chpoint->getStartDirection());
             break;
         case Checkpoint::CheckpointType::common:
@@ -139,7 +150,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
             break;
         }
 
-        chpoint->visit();
+        chpoint->visit(); // Пометить чекпоинт как посещенный
     }
 }
 
@@ -148,11 +159,13 @@ void Character::updateCost()
     if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0)
         return;
 
+    // Получить стоимость перемещения в данном направлении
     int cost = gameBoard->getCost(boardPos, directionQueue.first());
 
-    if(cost == -1)
+    if(cost == -1) // В данном нпаправлении находится стена
         return;
-    summaryWayCost += cost;
+
+    summaryWayCost += cost; // Увеличить суммарную стоимость пути
 
     qDebug() << "Cost at" << boardPos
              << "is" << cost << '\n'
@@ -161,14 +174,18 @@ void Character::updateCost()
 
 void Character::checkCollisionsWithItems()
 {
-    QList <QGraphicsItem *> items = scene()->collidingItems(this);
+    // Получить объекты, с которыми произошло столкновение
+    QList<QGraphicsItem *> items = scene()->collidingItems(this);
 
     for(auto i = items.begin(); i != items.end(); i++) {
         if((*i) == this)
             continue;
         else {
+            // Привести к типу абстрактного игрового объекта
             AbstractGameObject *obj = dynamic_cast <AbstractGameObject *> (*i);
 
+            /* Основываясь на имени объекта, определить
+             * с чем именно произошло столкновение */
             if(obj->objectName() == "Bonus")
                 collideWithBonus(obj);
             else if(obj->objectName() == "Checkpoint")

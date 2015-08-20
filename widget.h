@@ -12,7 +12,6 @@
 #include <QHBoxLayout>
 
 #include "game_scene/game_scene.h"
-#include "game_objects/bonus.h"
 
 class Widget : public QWidget
 {
