@@ -6,14 +6,18 @@
 #include <QStack>
 #include <QTextStream>
 #include <QFile>
+#include <QGraphicsScene>
 
 #include <random>
 #include <chrono>
 #include <iostream>
 
-#include "../game_model/graph.h"
+#include "game_model/graph.h"
+#include "game_objects/bonus.h"
 
-class Generator
+namespace Generators {
+
+class MazeGenerator
 {
 private:
     enum state { wall, free_cell, visited };
@@ -23,8 +27,6 @@ private:
     int height;
     int cellsHeight;
     int cellCount;
-
-    QVector <QPoint> points;
 
     Matrix maze;
     Graph *graph = nullptr;
@@ -51,7 +53,7 @@ private:
     int getHNeighboursCount(QPoint cell);
 
 public:
-    Generator(int w, int h);
+    MazeGenerator(int w, int h);
 
     Graph *getGraph() const;
 
@@ -65,6 +67,10 @@ public:
 
     void print();
 };
+
+void createCoins(Graph *g, QGraphicsScene *scene, int pixels);
+
+}
 
 #endif // GENERATOR
 

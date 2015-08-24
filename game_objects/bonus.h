@@ -8,7 +8,7 @@ class Bonus : public AbstractGameObject
     Q_OBJECT
 
 public:
-    enum BonusType { live }; // Типы бонусов
+    enum BonusType { live, coin }; // Типы бонусов
 
 private:
     BonusType type;

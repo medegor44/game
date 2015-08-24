@@ -1,6 +1,8 @@
-#include "generator.h"
+#include "generators.h"
 
-Generator::Generator(int w, int h)
+using namespace Generators;
+
+MazeGenerator::MazeGenerator(int w, int h)
 {
     width = w % 2 == 0 ? w + 1 : w;
     height = h % 2 == 0 ? h + 1 : h;
@@ -17,19 +19,18 @@ Generator::Generator(int w, int h)
     initMatrix();
 }
 
-void Generator::initMatrix()
+void MazeGenerator::initMatrix()
 {
     for(int i = 0; i < height; i++)
         for(int j = 0 ; j < width; j++) {
-            if(i % 2 == 0 && j % 2 == 0) {
+            if(i % 2 == 0 && j % 2 == 0)
                 maze[i][j] = free_cell;
-                points.push_back(QPoint(j, i));
-            } else
+            else
                 maze[i][j] = wall;
         }
 }
 
-void Generator::makeIndefinite()
+void MazeGenerator::makeIndefinite()
 {
     const double ratio = 1.0 / 7.0;
 
@@ -37,7 +38,7 @@ void Generator::makeIndefinite()
                                       .time_since_epoch().count());
 
     for(int i = 0; i < height; i++) {
-        QVector <int> walls;
+        QVector<int> walls;
 
         for(int j = 0; j < width; j++)
             if(maze[i][j] == wall) walls.push_back(j);
@@ -58,7 +59,7 @@ void Generator::makeIndefinite()
     }
 }
 
-void Generator::start(bool indefinite)
+void MazeGenerator::start(bool indefinite)
 {
     QPoint current(0, 0);
     QStack <QPoint> stack;
@@ -96,7 +97,7 @@ void Generator::start(bool indefinite)
     createGraph(); // создать граф
 }
 
-void Generator::createGraph()
+void MazeGenerator::createGraph()
 {
     graph = new Graph(width, height);
 
@@ -108,7 +109,7 @@ void Generator::createGraph()
                 graph->setCellType(QPoint(x, y), Graph::wall);
 }
 
-void Generator::generateLandscape()
+void MazeGenerator::generateLandscape()
 {
     std::default_random_engine random(std::chrono::system_clock::now()
                                       .time_since_epoch().count());
@@ -124,7 +125,7 @@ void Generator::generateLandscape()
     smoothLandscape(); // Сделать ланшафт более "размытым"
 }
 
-void Generator::smoothLandscape()
+void MazeGenerator::smoothLandscape()
 {
     for(int y = 0; y < height; y++) {
         for(int x = 0; x < width; x++) {
@@ -144,14 +145,14 @@ void Generator::smoothLandscape()
     }
 }
 
-Graph *Generator::getGraph() const
+Graph *MazeGenerator::getGraph() const
 {
     return graph; // Удалением старой версии занимается игрова сцена
 }
 
-QVector<QPoint> Generator::getNeighbours(QPoint cell)
+QVector<QPoint> MazeGenerator::getNeighbours(QPoint cell)
 {
-    QVector <QPoint> v;
+    QVector<QPoint> v;
 
     int x = cell.x();
     int y = cell.y();
@@ -171,7 +172,7 @@ QVector<QPoint> Generator::getNeighbours(QPoint cell)
     return v;
 }
 
-int Generator::getVNeighboursCount(QPoint cell)
+int MazeGenerator::getVNeighboursCount(QPoint cell)
 {
     int count = 0;
     if(cell.y() - 1 >= 0 && maze[cell.y() - 1][cell.x()] != wall)
@@ -182,7 +183,7 @@ int Generator::getVNeighboursCount(QPoint cell)
     return count;
 }
 
-int Generator::getHNeighboursCount(QPoint cell)
+int MazeGenerator::getHNeighboursCount(QPoint cell)
 {
     int count = 0;
     if(cell.x() - 1 >= 0 && maze[cell.y()][cell.x() - 1] != wall)
@@ -193,7 +194,7 @@ int Generator::getHNeighboursCount(QPoint cell)
     return count;
 }
 
-void Generator::print()
+void MazeGenerator::print()
 {
     QFile file("out.txt");
     file.open(QIODevice::Append | QIODevice::Text);
@@ -208,4 +209,29 @@ void Generator::print()
     out << "\n\n";
 
     cout << "\n\n" << endl;
+}
+
+
+void Generators::createCoins(Graph *g, QGraphicsScene *scene, int pixels)
+{
+    const double ratio = 1.0 / 7.0;
+    QList<QPoint> usedPoints;
+    std::default_random_engine random(std::chrono::system_clock::now()
+                                      .time_since_epoch().count());
+    int coinsCount = ceil(ratio * (g->getWidth() * g->getHeight()));
+
+    usedPoints.push_back(g->getStartPos());
+    usedPoints.push_back(g->getEndPos());
+
+    for(int i = 0; i < coinsCount; ) {
+        QPoint randPoint(random() % g->getWidth(),
+                         random() % g->getHeight());
+
+//        scene->items();
+        if(g->getType(randPoint) != Graph::wall && !usedPoints.contains(randPoint)) {
+            scene->addItem(new Bonus(Bonus::BonusType::coin, randPoint, pixels));
+            usedPoints.push_back(randPoint);
+            i++;
+        }
+    }
 }

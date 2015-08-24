@@ -83,10 +83,11 @@ bool GraphAlgoritms::checkBoard(Matrix m, int begin, int end)
     if(begin == end)
         return true;
 
-    QVector <bool> visited(m.size());
-    QStack <int> stack;
+    QVector<bool> visited(m.size());
+    QStack<int> stack;
 
-    for(bool &a : visited) a = false;
+    for(bool &a : visited)
+        a = false;
     stack.push(begin);
 
     while(!stack.isEmpty()) {

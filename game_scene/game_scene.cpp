@@ -40,7 +40,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        gameLoop.start(1000/45);
+        gameLoop.start(1000/30);
         break;
     case Qt::Key_G:
         newGraph();
@@ -70,6 +70,11 @@ void GameScene::finished()
     gameLoop.stop();
 }
 
+
+int GameScene::getPixels() const
+{
+    return pixels;
+}
 void GameScene::newGraph()
 {
     if(gameLoop.isActive())
@@ -77,11 +82,13 @@ void GameScene::newGraph()
 
     clearScene(); // Очистить сцену от старых объектов
 
-    Generator generator(graphWidth, graphHeight);
+    Generators::MazeGenerator generator(graphWidth, graphHeight);
     generator.start(true);
 
     delete graph;
     graph = generator.getGraph();
+
+    Generators::createCoins(graph, this, pixels);
 
     initGameObjects();
 

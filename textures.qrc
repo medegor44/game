@@ -9,5 +9,6 @@
         <file>textures/sand.png</file>
         <file>textures/stone.png</file>
         <file>textures/swamp.png</file>
+        <file>textures/coin.png</file>
     </qresource>
 </RCC>

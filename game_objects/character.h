@@ -26,11 +26,12 @@ private:
     Checkpoint *startCheckoint = nullptr;
     Checkpoint *currentCheckpoint = nullptr;
 
-    QQueue <CommonThings::Directions> directionQueue;
+    QQueue<CommonThings::Directions> directionQueue;
 
     const int step = 3;
     int lives;
     int summaryWayCost;
+    quint64 coinsScore; // Количество монеток, собранных игроком
 
     void checkCollisionsWithWall();
     void checkCollisionsWithItems();
@@ -53,6 +54,7 @@ public:
 
     virtual void advance(int phase);
     int getSummaryWayCost() const;
+    quint64 getCoinsScore() const;
 };
 
 #endif // CHARACTER

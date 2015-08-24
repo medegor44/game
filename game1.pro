@@ -20,20 +20,20 @@ SOURCES += main.cpp\
     game_scene/game_scene.cpp \
     game_objects/bonus.cpp \
     game_objects/abstract_game_object.cpp \
-    maze_generator/generator.cpp \
     game_objects/character.cpp \
-    game_objects/checkpoint.cpp
+    game_objects/checkpoint.cpp \
+    maze_generator/generators.cpp
 
 HEADERS  += widget.h \
     game_model/graph.h \
     game_model/graph_algorithms.h \
     game_scene/game_scene.h \
     game_objects/abstract_game_object.h \
-    maze_generator/generator.h \
     game_objects/character.h \
     game_objects/bonus.h \
     game_objects/checkpoint.h \
-    common_things.h
+    common_things.h \
+    maze_generator/generators.h
 
 RESOURCES += \
     textures.qrc

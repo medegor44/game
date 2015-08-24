@@ -7,6 +7,7 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
 {
     lives = 3;
     summaryWayCost = 0;
+    coinsScore = 0;
 
     this->gameBoard = gameBoard;
     setObjectName("Character");
@@ -55,6 +56,11 @@ int Character::getSummaryWayCost() const
     return summaryWayCost;
 }
 
+
+quint64 Character::getCoinsScore() const
+{
+    return coinsScore;
+}
 void Character::checkCollisionsWithWall()
 {
     QPoint collidePoint;
@@ -116,6 +122,9 @@ void Character::collideWithBonus(AbstractGameObject *obj)
         switch (bonus->getType()) {
         case Bonus::BonusType::live:
             lives++;
+            break;
+        case Bonus::BonusType::coin:
+            coinsScore += 50;
             break;
             /* Продолжение следует... */
         }
@@ -182,9 +191,9 @@ void Character::checkCollisionsWithItems()
             continue;
         else {
             // Привести к типу абстрактного игрового объекта
-            AbstractGameObject *obj = dynamic_cast <AbstractGameObject *> (*i);
+            AbstractGameObject *obj = dynamic_cast<AbstractGameObject *> (*i);
 
-            /* Основываясь на имени объекта, определить
+            /* Основываясь на имени объекта, определяем
              * с чем именно произошло столкновение */
             if(obj->objectName() == "Bonus")
                 collideWithBonus(obj);

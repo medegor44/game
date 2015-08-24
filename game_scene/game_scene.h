@@ -10,8 +10,8 @@
 
 #include <QDebug>
 
-#include "../game_model/graph.h"
-#include "../maze_generator/generator.h"
+#include "game_model/graph.h"
+#include "maze_generator/generators.h"
 #include "game_objects/character.h"
 
 typedef Graph::TerrainType Terrain_t;
@@ -46,6 +46,7 @@ protected slots:
 public:
     GameScene(QObject *parent);
     ~GameScene();
+    int getPixels() const;
 };
 
 #endif // GAME_SCENE
