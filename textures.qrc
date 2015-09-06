@@ -10,5 +10,6 @@
         <file>textures/stone.png</file>
         <file>textures/swamp.png</file>
         <file>textures/coin.png</file>
+        <file>sounds/sound.mp3</file>
     </qresource>
 </RCC>

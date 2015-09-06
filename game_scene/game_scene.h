@@ -22,11 +22,11 @@ class GameScene : public QGraphicsScene
 
 protected:
     const int pixels = 30;
-    int graphWidth = 62;
-    int graphHeight = 33;
+    int graphWidth = 20;
+    int graphHeight = 20;
 
     Graph *graph;
-    Character *player;
+    Character *player = nullptr;
 
     QTimer gameLoop;
     QPixmap landscapeTextures[Graph::maxTypes];
@@ -39,6 +39,10 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void keyPressEvent(QKeyEvent *event);
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
+
+signals:
+    void playMusic();
+    void stopMusic();
 
 protected slots:
     void finished();

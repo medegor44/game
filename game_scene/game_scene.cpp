@@ -9,7 +9,6 @@ GameScene::GameScene(QObject *parent)
     graph->setCellType(QPoint(0, 1), Terrain_t::hill);
     graph->setCellType(QPoint(0, 2), Terrain_t::sand);
     graph->setCellType(QPoint(0, 3), Terrain_t::swamp);
-//    graph->setCellType(QPoint(0, 4), Terrain_t::mountain);
 
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
@@ -19,12 +18,12 @@ GameScene::GameScene(QObject *parent)
 
     qDebug() << sceneRect();
 
-    connect(&gameLoop, SIGNAL(timeout()), this, SLOT(advance()));
+    connect(&gameLoop, &QTimer::timeout, this, &QGraphicsScene::advance);
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
-    for(int y = 0; y < graph->getHeight(); y++) {
+    for(int y = 0; y < graph->getHeight(); y++)
         for(int x = 0; x < graph->getWidth(); x++) {
             QRectF irect = QRectF(x * pixels, y * pixels, pixels, pixels);
             if(rect.intersects(irect)) {
@@ -32,7 +31,6 @@ void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
                                     landscapeTextures[graph->getType(QPoint(x, y))]);
             }
         }
-    }
 }
 
 void GameScene::keyPressEvent(QKeyEvent *event)
@@ -40,12 +38,14 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_Return:
     case Qt::Key_Enter:
-        gameLoop.start(1000/30);
+        gameLoop.start(1000/35);
+        emit playMusic();
         break;
     case Qt::Key_G:
         newGraph();
         break;
     case Qt::Key_Escape:
+        emit stopMusic();
         gameLoop.stop();
         break;
     }
@@ -61,20 +61,29 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GameScene::finished()
 {
-    int dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
+    emit stopMusic();
+    double dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
+    double playerDist = player->getSummaryWayCost();
 
-    QString infoStr = "Perfect dist = %1\nYour dist = %2";
+    QString infoStr = "Perfect dist = %1\nYour dist = %2\nCoins = %3\n"
+                      "Score = %4";
+
+    double ratio = playerDist / dist;
+    int score = dist / ratio * 100;
+
     QMessageBox::information(nullptr, "Statistic", infoStr
                              .arg(dist)
-                             .arg(player->getSummaryWayCost()));
+                             .arg(player->getSummaryWayCost())
+                             .arg(player->getCoinsScore())
+                             .arg(score + player->getCoinsScore()));
     gameLoop.stop();
 }
-
 
 int GameScene::getPixels() const
 {
     return pixels;
 }
+
 void GameScene::newGraph()
 {
     if(gameLoop.isActive())
@@ -102,7 +111,7 @@ void GameScene::newGraph()
 
 void GameScene::clearScene()
 {
-    QList <QGraphicsItem *> gameObjects = items();
+    QList<QGraphicsItem *> gameObjects = items();
 
     for(QGraphicsItem *obj : gameObjects)
         removeItem(obj);
@@ -132,7 +141,7 @@ void GameScene::initGameObjects()
     setFocusItem(player);
     addItem(player);
 
-    connect(player, SIGNAL(finished()), this, SLOT(finished()));
+    connect(player, &Character::finished, this, &GameScene::finished);
 }
 
 GameScene::~GameScene()
