@@ -1,5 +1,7 @@
 #include "checkpoint.h"
 
+#include <QTime>
+
 using CommonThings::Directions;
 
 Checkpoint::Checkpoint(QPoint bp, int pixels, CheckpointType t, Graph *g,

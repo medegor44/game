@@ -1,5 +1,9 @@
 #include "graph.h"
 
+#include <QFile>
+#include <QTextStream>
+#include <algorithm>
+
 using CommonThings::Directions;
 
 Graph::Graph(int w, int h)
@@ -107,6 +111,9 @@ int Graph::getCost(QPoint from, CommonThings::Directions dir)
     case CommonThings::right:
         t = getType(QPoint(from.x() + 1, from.y()));
         break;
+    default:
+        // Метод гарантирует корректную обработку случая dir == Dorections::none
+        break;
     }
 
     if(t == TerrainType::wall || dir == CommonThings::Directions::none)
@@ -116,23 +123,24 @@ int Graph::getCost(QPoint from, CommonThings::Directions dir)
         return qMax(t, board[from.y()][from.x()]);
 }
 
-// ### Конец функций получения и установки типа для точки ###
 Matrix Graph::toAdejecencyMatrix()
 {
-    Matrix adjecencyMatrix(width * height);
+    Matrix adjecencyMatrix(width * height); // Матрица width x height
     for(QVector <int> &v : adjecencyMatrix)
         v.resize(width * height);
 
     for(auto i = edges.begin(); i != edges.end(); ++i) {
-        int first = i->y1() * width + i->x1();
+        int first = i->y1() * width + i->x1(); // Получение индексов вершины
         int second = i->y2() * width + i->x2();
 
+        // Получение весов первой и второй веришины, которые связаны общим ребром
         int tFirst = board[i->y1()][i->x1()];
         int tSecond = board[i->y2()][i->x2()];
 
+        // У стены самый высокий приоритет
         if(tFirst == TerrainType::wall || tSecond == TerrainType::wall)
             adjecencyMatrix[first][second] = TerrainType::wall;
-        else
+        else // В противном случе выбор максимального значения
             adjecencyMatrix[first][second] = qMax(tFirst, tSecond);
     }
 

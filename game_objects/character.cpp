@@ -1,5 +1,8 @@
 #include "character.h"
 
+#include "bonus.h"
+
+
 using CommonThings::Directions;
 
 Character::Character(QPoint bp, int pixels, Graph *gameBoard)
@@ -11,7 +14,6 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
 
     this->gameBoard = gameBoard;
 
-    directionQueue.push_back(Directions::none);
     currentDirecton = Directions::none;
 
     setObjectName("Character");
@@ -46,7 +48,7 @@ void Character::advance(int phase)
         break;
     }
 
-    updateCost();
+    updateCost(); // Обновить стоимость пройденного пути
 
     if(int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0)
         currentDirecton = Directions::none;
@@ -108,16 +110,12 @@ void Character::checkCollisionsWithWall()
         // В точке возможного столкновения нет стены
         return;
 
-    // В противном случае:
-
-    directionQueue.clear();
     lives--;
 
     /* При нулевом значении жизней возвращаемся на стартовый чекпоинт,
      * в противном случае на последний посещенный. */
     boardPos = (lives == 0 ? startCheckoint : currentCheckpoint)->getBoardPos();
-//    directionQueue.push_back((lives == 0 ? startCheckoint : currentCheckpoint)
-//                             ->getStartDirection());
+
     currentDirecton = Directions::none;
 
     if(lives == 0) // Восстанавливаем начальное значение жизней
@@ -160,8 +158,6 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
         switch (chpoint->getType()) {
         case Checkpoint::CheckpointType::start:
             startCheckoint = currentCheckpoint = chpoint;
-            // Протолкнуть в очередь начальное направление стартового чекпоинта
-            directionQueue.push_back(chpoint->getStartDirection());
             break;
         case Checkpoint::CheckpointType::common:
             currentCheckpoint = chpoint;
@@ -179,8 +175,10 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
 void Character::updateCost()
 {
     if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0
-            || currentDirecton == Directions::none)
+            || currentDirecton == Directions::none) {
+        // Персонаж находится на стадии перемещения или стоит на месте
         return;
+    }
 
     // Получить стоимость перемещения в данном направлении
     int cost = gameBoard->getCost(boardPos, currentDirecton);
@@ -228,10 +226,8 @@ void Character::keyPressEvent(QKeyEvent *event)
         return;
 
     QString text = event->text();
-    qDebug() << text;
 
     if(text == tr("w") || text == tr("W"))
-//        directionQueue.push_back(Directions::up);
         currentDirecton = Directions::up;
     else if(text == tr("s") || text == tr("S"))
         currentDirecton = Directions::down;

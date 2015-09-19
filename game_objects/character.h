@@ -8,16 +8,20 @@
 
 #include "../game_model/graph.h"
 #include "../common_things.h"
+#include "checkpoint.h"
 
 #include "abstract_game_object.h"
-#include "bonus.h"
-#include "checkpoint.h"
 
 class Character : public AbstractGameObject
 {
     Q_OBJECT
 
 private:
+    const int step = 3;
+    int lives;
+    int summaryWayCost;
+    quint64 coinsScore; // Количество монеток, собранных игроком
+
     // текущее направление робота
     CommonThings::Directions currentDirecton;
 
@@ -26,12 +30,6 @@ private:
     Checkpoint *startCheckoint = nullptr;
     Checkpoint *currentCheckpoint = nullptr;
 
-    QQueue<CommonThings::Directions> directionQueue;
-
-    const int step = 3;
-    int lives;
-    int summaryWayCost;
-    quint64 coinsScore; // Количество монеток, собранных игроком
 
     void checkCollisionsWithWall();
     void checkCollisionsWithItems();
@@ -52,7 +50,7 @@ signals:
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
 
-    virtual void advance(int phase);
+    void advance(int phase) override;
     int getSummaryWayCost() const;
     int getCoinsScore() const;
 };

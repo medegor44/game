@@ -4,10 +4,9 @@
 #include <QVector>
 #include <QPoint>
 #include <QPair>
-#include <QFile>
-#include <QTextStream>
+
 #include <QLine>
-#include <algorithm>
+
 
 #include "graph_algorithms.h"
 #include "../common_things.h"

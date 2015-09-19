@@ -1,8 +1,9 @@
 #ifndef CHECKPOINT
 #define CHECKPOINT
 
-#include <QTime>
-
+/* ВАЖНО: Некоторые методы и поля в классе являются устаревшими!
+          Например метод выбора случайного напрпаравления с чекпоинта
+*/
 #include "abstract_game_object.h"
 #include "../common_things.h"
 
