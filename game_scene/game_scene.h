@@ -6,9 +6,7 @@
 #include <QGraphicsSceneMouseEvent>
 #include <QPixmap>
 #include <QTimer>
-#include <QMessageBox>
 
-#include <QDebug>
 
 #include "game_model/graph.h"
 #include "maze_generator/generators.h"

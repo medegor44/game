@@ -1,15 +1,18 @@
 #include "game_scene.h"
 
+#include <QMessageBox>
+#include <QDebug>
+
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent)
 {
     graph = new Graph(graphWidth, graphHeight);
     setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
-
+/*
     graph->setCellType(QPoint(0, 1), Terrain_t::hill);
     graph->setCellType(QPoint(0, 2), Terrain_t::sand);
     graph->setCellType(QPoint(0, 3), Terrain_t::swamp);
-
+*/
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
     loadTextures();
@@ -19,6 +22,7 @@ GameScene::GameScene(QObject *parent)
     qDebug() << sceneRect();
 
     connect(&gameLoop, &QTimer::timeout, this, &QGraphicsScene::advance);
+//    connect(&gameLoop, &QTimer::timeout, [](){ qDebug() << "Tick"; });
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -39,14 +43,19 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     case Qt::Key_Return:
     case Qt::Key_Enter:
         gameLoop.start(1000/35);
-        emit playMusic();
+        qDebug() << "Start";
+//        emit playMusic();
         break;
     case Qt::Key_G:
         newGraph();
         break;
     case Qt::Key_Escape:
+        /* FIX IT: после паузы игра не запускается, а персонаж
+         * принимает направление, если ему это сообщить,
+         * по которому движется после старта */
         emit stopMusic();
         gameLoop.stop();
+        QMessageBox::information(nullptr, "Puase", "Game paused.");
         break;
     }
 
@@ -62,6 +71,7 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 void GameScene::finished()
 {
     emit stopMusic();
+
     double dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
     double playerDist = player->getSummaryWayCost();
 

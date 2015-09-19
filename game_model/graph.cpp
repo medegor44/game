@@ -109,7 +109,8 @@ int Graph::getCost(QPoint from, CommonThings::Directions dir)
         break;
     }
 
-    if(t == TerrainType::wall) // При встрече со стеной персонаж погибает
+    if(t == TerrainType::wall || dir == CommonThings::Directions::none)
+        // При встрече со стеной персонаж погибает
         return -1;
     else // В остальных случаях возвращаем максимальное значение
         return qMax(t, board[from.y()][from.x()]);

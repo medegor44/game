@@ -54,7 +54,7 @@ public:
 
     virtual void advance(int phase);
     int getSummaryWayCost() const;
-    quint64 getCoinsScore() const;
+    int getCoinsScore() const;
 };
 
 #endif // CHARACTER

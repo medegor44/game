@@ -10,41 +10,46 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     coinsScore = 0;
 
     this->gameBoard = gameBoard;
+
+    directionQueue.push_back(Directions::none);
+    currentDirecton = Directions::none;
+
     setObjectName("Character");
 }
 
 void Character::advance(int phase)
 {
-    if(phase == 0)
+    if(phase == 0 || currentDirecton == Directions::none) {
+        // Персонаж стоит на месте
         return;
+    }
 
-    // Проверить столкновения со стеной и другими элементами нв сцене
+    // Проверить столкновения с игрвыми объектами и стенами
     checkCollisionsWithItems();
     checkCollisionsWithWall();
 
-    // Обновить стоимость пройденного пути
-    updateCost();
-
-    // Перемещение в указанном направлении
-    switch (directionQueue.first()) {
-    case Directions::up:
-        setY(y() - step);
-        break;
+    switch(currentDirecton) {
     case Directions::down:
         setY(y() + step);
         break;
-    case Directions::left:
-        setX(x() - step);
+    case Directions::up:
+        setY(y() - step);
         break;
     case Directions::right:
         setX(x() + step);
         break;
+    case Directions::left:
+        setX(x() - step);
+        break;
+    case Directions::none:
+        qDebug() << "Do nothing";
+        break;
     }
 
-    // Персонаж полностью зашел на клетку поля
-    if(int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0 && directionQueue.size() > 1)
-        // Вытолкнуть из очереди старое направление
-        directionQueue.pop_front();
+    updateCost();
+
+    if(int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0)
+        currentDirecton = Directions::none;
 
     // Сдвинуть объект на новыую позицию относительно игрового поля
     boardPos.rx() = int(x()) / cellWidth;
@@ -56,18 +61,20 @@ int Character::getSummaryWayCost() const
     return summaryWayCost;
 }
 
-
-quint64 Character::getCoinsScore() const
+int Character::getCoinsScore() const
 {
     return coinsScore;
 }
 void Character::checkCollisionsWithWall()
 {
+    if(currentDirecton == Directions::none)
+        return;
+
     QPoint collidePoint;
 
     /* Выбор точки, относительно которой будет происходить проверка столкновения
        со стеной */
-    switch (directionQueue.first()) {
+    switch (currentDirecton) {
     case Directions::up:
         collidePoint.rx() =  x() + (boundingRect().width() / 2);
         collidePoint.ry() = y();
@@ -84,6 +91,9 @@ void Character::checkCollisionsWithWall()
         collidePoint.rx() = x() + boundingRect().width();
         collidePoint.ry() = y() + (boundingRect().height() / 2);
         break;
+    default:
+        // Ничего не делаем
+        return;
     }
 
     /* При неотрицательных координатах необходимо определить,
@@ -106,8 +116,10 @@ void Character::checkCollisionsWithWall()
     /* При нулевом значении жизней возвращаемся на стартовый чекпоинт,
      * в противном случае на последний посещенный. */
     boardPos = (lives == 0 ? startCheckoint : currentCheckpoint)->getBoardPos();
-    directionQueue.push_back((lives == 0 ? startCheckoint : currentCheckpoint)
-                             ->getStartDirection());
+//    directionQueue.push_back((lives == 0 ? startCheckoint : currentCheckpoint)
+//                             ->getStartDirection());
+    currentDirecton = Directions::none;
+
     if(lives == 0) // Восстанавливаем начальное значение жизней
         lives = 3;
 
@@ -125,6 +137,7 @@ void Character::collideWithBonus(AbstractGameObject *obj)
             break;
         case Bonus::BonusType::coin:
             coinsScore += 50;
+            qDebug() << "Coins score =" << coinsScore;
             break;
             /* Продолжение следует... */
         }
@@ -165,13 +178,14 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
 
 void Character::updateCost()
 {
-    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0)
+    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0
+            || currentDirecton == Directions::none)
         return;
 
     // Получить стоимость перемещения в данном направлении
-    int cost = gameBoard->getCost(boardPos, directionQueue.first());
+    int cost = gameBoard->getCost(boardPos, currentDirecton);
 
-    if(cost == -1) // В данном нпаправлении находится стена
+    if(cost == -1) // В данном нпаправлении находится стена или персонаж не движется
         return;
 
     summaryWayCost += cost; // Увеличить суммарную стоимость пути
@@ -210,14 +224,19 @@ void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
 void Character::keyPressEvent(QKeyEvent *event)
 {
+    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0)
+        return;
+
     QString text = event->text();
+    qDebug() << text;
 
     if(text == tr("w") || text == tr("W"))
-        directionQueue.push_back(Directions::up);
+//        directionQueue.push_back(Directions::up);
+        currentDirecton = Directions::up;
     else if(text == tr("s") || text == tr("S"))
-        directionQueue.push_back(Directions::down);
+        currentDirecton = Directions::down;
     else if(text == tr("a") || text == tr("A"))
-        directionQueue.push_back(Directions::left);
+        currentDirecton = Directions::left;
     else if(text == tr("d") || text == tr("D"))
-        directionQueue.push_back(Directions::right);
+        currentDirecton = Directions::right;
 }

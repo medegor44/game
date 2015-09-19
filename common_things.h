@@ -3,7 +3,7 @@
 
 namespace CommonThings {
 
-enum Directions { up, down, left, right };
+enum Directions { up, down, left, right, none };
 
 }
 
