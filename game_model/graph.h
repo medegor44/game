@@ -6,7 +6,7 @@
 #include <QPair>
 
 #include <QLine>
-
+#include <QRect>
 
 #include "graph_algorithms.h"
 #include "../common_things.h"
@@ -18,7 +18,9 @@ class Graph
 public:
     // Тип клетки поля
     enum TerrainType { wall, field, hill, sand, swamp/*, mountain*/ };
+
     typedef QVector <QVector <TerrainType>> TerrainMatrix;
+
     // Максимальное число типов
     static const int maxTypes = 5;
 
@@ -26,12 +28,18 @@ private:
     int width;
     int height;
 
+    // Прямоугольник поля
+    QRect graphRect;
+
     // Начальная позиция на поле
     QPoint startPos;
+
     // Конечная позиция на поле
     QPoint endPos;
+
     // Игровое поле
     TerrainMatrix board;
+
     // Возможные пути на игровом поле
     QList<QLine> edges;
 
@@ -48,7 +56,8 @@ public:
     void setCellType(QPoint p, TerrainType t);
 
     // Получить стоимость перемещения в клеку поля, распололженную в направлении dir
-    int getCost(QPoint from, CommonThings::Directions dir);
+    int getCellType(QPoint from, CommonThings::Directions dir);
+    int getCellType(QPoint from, QPoint to);
 
     // Проверить правильно ли создано поле
     bool checkBoard(QPoint begin, QPoint end);

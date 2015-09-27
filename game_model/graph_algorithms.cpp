@@ -52,7 +52,7 @@ void Dijkstra::findTheWay(int start)
     qDebug() << "In Algoryth::findTheWay();";
     qDebug() << "Start pos =" << start;
 
-    dist[start] = 0;
+    dist[start] = 0; // FIX IT! Начальная стоимость пути может быть не нуль
     prev[start] = start;
 
     for(int current = start, count = adjacencyMatrix.size(); count > 0 && current >= 0; count--) {

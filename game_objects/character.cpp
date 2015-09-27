@@ -21,16 +21,17 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
 
 void Character::advance(int phase)
 {
-    if(phase == 0 || currentDirecton == Directions::none) {
-        // Персонаж стоит на месте
+    if (phase == 0)
+        return;
+
+    if (gameBoard->getCellType(boardPos, currentDirecton) == Graph::TerrainType::wall) {
+        currentDirecton = CommonThings::none;
         return;
     }
 
-    // Проверить столкновения с игрвыми объектами и стенами
-    checkCollisionsWithItems();
-    checkCollisionsWithWall();
+    updateCost(); // Обновить стоимость пройденного пути
 
-    switch(currentDirecton) {
+    switch (currentDirecton) {
     case Directions::down:
         setY(y() + step);
         break;
@@ -44,18 +45,21 @@ void Character::advance(int phase)
         setX(x() - step);
         break;
     case Directions::none:
-        qDebug() << "Do nothing";
         break;
     }
 
-    updateCost(); // Обновить стоимость пройденного пути
 
-    if(int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0)
+    // персонаж полностью занял клетку
+    if (int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0) {
+        // Проверить столкновения с игрвыми объектами
+        checkCollisionsWithItems();
+
         currentDirecton = Directions::none;
 
-    // Сдвинуть объект на новыую позицию относительно игрового поля
-    boardPos.rx() = int(x()) / cellWidth;
-    boardPos.ry() = int(y()) / cellWidth;
+        // Сдвинуть объект на новыую позицию относительно игрового поля
+        boardPos.rx() = int(x()) / cellWidth;
+        boardPos.ry() = int(y()) / cellWidth;
+    }
 }
 
 int Character::getSummaryWayCost() const
@@ -67,6 +71,8 @@ int Character::getCoinsScore() const
 {
     return coinsScore;
 }
+
+/* Устаревший метод
 void Character::checkCollisionsWithWall()
 {
     if(currentDirecton == Directions::none)
@@ -74,8 +80,8 @@ void Character::checkCollisionsWithWall()
 
     QPoint collidePoint;
 
-    /* Выбор точки, относительно которой будет происходить проверка столкновения
-       со стеной */
+    // Выбор точки, относительно которой будет происходить проверка столкновения
+    // со стеной
     switch (currentDirecton) {
     case Directions::up:
         collidePoint.rx() =  x() + (boundingRect().width() / 2);
@@ -98,8 +104,8 @@ void Character::checkCollisionsWithWall()
         return;
     }
 
-    /* При неотрицательных координатах необходимо определить,
-     * есть выход за границы или нет */
+    // При неотрицательных координатах необходимо определить,
+    // * есть выход за границы или нет
 
     if(collidePoint.x() >= 0 && collidePoint.y() >= 0) {
         collidePoint.rx() /= cellWidth;
@@ -112,8 +118,8 @@ void Character::checkCollisionsWithWall()
 
     lives--;
 
-    /* При нулевом значении жизней возвращаемся на стартовый чекпоинт,
-     * в противном случае на последний посещенный. */
+    // При нулевом значении жизней возвращаемся на стартовый чекпоинт,
+    // в противном случае на последний посещенный.
     boardPos = (lives == 0 ? startCheckoint : currentCheckpoint)->getBoardPos();
 
     currentDirecton = Directions::none;
@@ -124,6 +130,7 @@ void Character::checkCollisionsWithWall()
     // Устанавливаем персонажа на новую позицию
     setPos(boardPos.x() * cellWidth, boardPos.y() * cellWidth);
 }
+*/
 
 void Character::collideWithBonus(AbstractGameObject *obj)
 {
@@ -148,7 +155,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
 {
     Checkpoint *chpoint = dynamic_cast<Checkpoint *> (obj);
 
-    if((pos() - chpoint->pos()).manhattanLength() >= 10)
+    if(pos() != chpoint->pos())
         // Недостаточно близко подошли к чекпоинту
         return;
 
@@ -176,14 +183,14 @@ void Character::updateCost()
 {
     if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0
             || currentDirecton == Directions::none) {
-        // Персонаж находится на стадии перемещения или стоит на месте
+        // Персонаж находится в стадии перемещения или стоит на месте
         return;
     }
 
     // Получить стоимость перемещения в данном направлении
-    int cost = gameBoard->getCost(boardPos, currentDirecton);
+    int cost = gameBoard->getCellType(boardPos, currentDirecton);
 
-    if(cost == -1) // В данном нпаправлении находится стена или персонаж не движется
+    if(cost == 0) // В данном нпаправлении находится стена или персонаж не движется
         return;
 
     summaryWayCost += cost; // Увеличить суммарную стоимость пути
@@ -198,8 +205,8 @@ void Character::checkCollisionsWithItems()
     // Получить объекты, с которыми произошло столкновение
     QList<QGraphicsItem *> items = scene()->collidingItems(this);
 
-    for(auto i = items.begin(); i != items.end(); i++) {
-        if((*i) == this)
+    for (auto i = items.begin(); i != items.end(); i++) {
+        if ((*i) == this)
             continue;
         else {
             // Привести к типу абстрактного игрового объекта
@@ -207,9 +214,9 @@ void Character::checkCollisionsWithItems()
 
             /* Основываясь на имени объекта, определяем
              * с чем именно произошло столкновение */
-            if(obj->objectName() == "Bonus")
+            if (obj->objectName() == "Bonus")
                 collideWithBonus(obj);
-            else if(obj->objectName() == "Checkpoint")
+            else if (obj->objectName() == "Checkpoint")
                 collideWithCheckpoint(obj);
         }
     }

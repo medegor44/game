@@ -13,6 +13,8 @@ Graph::Graph(int w, int h)
     width = w;
     height = h;
 
+    graphRect = QRect(0, 0, w, h);
+
     /* По умолчанию начальная позция - верхний правый угол,
        конечная - нижний левый */
     startPos = QPoint(0, 0);
@@ -93,34 +95,54 @@ void Graph::setCellType(QPoint p, TerrainType t)
     board[p.y()][p.x()] = t;
 }
 
-int Graph::getCost(QPoint from, CommonThings::Directions dir)
+int Graph::getCellType(QPoint from, QPoint to)
+{
+    if (!(graphRect.contains(from) && graphRect.contains(to)))
+        return TerrainType::wall;
+
+    TerrainType typeFrom = board[from.y()][from.x()];
+    TerrainType typeTo = board[to.y()][to.x()];
+
+    if (typeFrom == TerrainType::wall || typeTo == TerrainType::wall)
+        return TerrainType::wall;
+    else
+        return qMax(typeFrom, typeTo);
+}
+
+int Graph::getCellType(QPoint from, CommonThings::Directions dir)
 {
     TerrainType t;
+    QPoint to;
 
     // Выбор стоимости точки, в сторону которой происходит движение
     switch (dir) {
     case CommonThings::down:
-        t = getType(QPoint(from.x(), from.y() + 1));
+        to = QPoint(from.x(), from.y() + 1);
         break;
     case CommonThings::up:
-        t = getType(QPoint(from.x(), from.y() - 1));
+        to = QPoint(from.x(), from.y() - 1);
         break;
     case CommonThings::left:
-        t = getType(QPoint(from.x() - 1, from.y()));
+        to = QPoint(from.x() - 1, from.y());
         break;
     case CommonThings::right:
-        t = getType(QPoint(from.x() + 1, from.y()));
+        to = QPoint(from.x() + 1, from.y());
+        break;
+    case CommonThings::none:
+        to = from;
         break;
     default:
         // Метод гарантирует корректную обработку случая dir == Dorections::none
         break;
     }
 
-    if(t == TerrainType::wall || dir == CommonThings::Directions::none)
-        // При встрече со стеной персонаж погибает
-        return -1;
-    else // В остальных случаях возвращаем максимальное значение
-        return qMax(t, board[from.y()][from.x()]);
+//    if(t == TerrainType::wall)
+//        // При встрече со стеной персонаж погибает
+//        return t;
+//    else // В остальных случаях возвращаем максимальное значение
+//        return qMax(t, board[from.y()][from.x()]);
+
+    return getCellType(from, to);
 }
 
 Matrix Graph::toAdejecencyMatrix()
@@ -138,10 +160,12 @@ Matrix Graph::toAdejecencyMatrix()
         int tSecond = board[i->y2()][i->x2()];
 
         // У стены самый высокий приоритет
-        if(tFirst == TerrainType::wall || tSecond == TerrainType::wall)
-            adjecencyMatrix[first][second] = TerrainType::wall;
-        else // В противном случе выбор максимального значения
-            adjecencyMatrix[first][second] = qMax(tFirst, tSecond);
+//        if(tFirst == TerrainType::wall || tSecond == TerrainType::wall)
+//            adjecencyMatrix[first][second] = TerrainType::wall;
+//        else // В противном случе выбор максимального значения
+//            adjecencyMatrix[first][second] = qMax(tFirst, tSecond);
+
+        adjecencyMatrix[first][second] = getCellType(i->p1(), i->p2());
     }
 
     return adjecencyMatrix;

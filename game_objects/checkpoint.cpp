@@ -29,7 +29,7 @@ void Checkpoint::visit()
 
 void Checkpoint::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
-    painter->drawPixmap(boundingRect().toRect(), texture);
+    //painter->drawPixmap(boundingRect().toRect(), texture);
 }
 
 QVector<Directions> Checkpoint::getDirVector(Graph *g)

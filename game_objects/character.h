@@ -18,9 +18,10 @@ class Character : public AbstractGameObject
 
 private:
     const int step = 3;
+    int summaryWayCost = 0;
+    int coinsScore = 0; // Количество монеток, собранных игроком
+    bool isMoving = false;
     int lives;
-    int summaryWayCost;
-    quint64 coinsScore; // Количество монеток, собранных игроком
 
     // текущее направление робота
     CommonThings::Directions currentDirecton;
@@ -31,7 +32,7 @@ private:
     Checkpoint *currentCheckpoint = nullptr;
 
 
-    void checkCollisionsWithWall();
+    void checkCollisionsWithWall(); // Устаревший метод
     void checkCollisionsWithItems();
 
     void collideWithBonus(AbstractGameObject *obj);
