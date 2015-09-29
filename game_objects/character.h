@@ -21,6 +21,7 @@ private:
     int summaryWayCost = 0;
     int coinsScore = 0; // Количество монеток, собранных игроком
     bool isMoving = false;
+    bool paused = true;
     int lives;
 
     // текущее направление робота
@@ -40,13 +41,16 @@ private:
     void updateCost();
 
 protected:
-    virtual void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
-
-    virtual void keyPressEvent(QKeyEvent *event);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    void keyPressEvent(QKeyEvent *event);
 
 signals:
     // Сообщение о столкновении с конечным чекпоинтом
     void finished();
+
+public slots:
+    void pause() { paused = true; }
+    void play() { paused = false; }
 
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard);

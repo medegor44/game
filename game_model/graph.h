@@ -64,6 +64,7 @@ public:
 
     // Получить расстояние между точками begin и end
     int getDist(QPoint begin, QPoint end);
+    int getDist();
 
     int getWidth() const
     { return width; }

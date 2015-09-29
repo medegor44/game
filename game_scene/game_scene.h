@@ -20,8 +20,8 @@ class GameScene : public QGraphicsScene
 
 protected:
     const int pixels = 30;
-    int graphWidth = 3;
-    int graphHeight = 3;
+    int graphWidth = 21;
+    int graphHeight = 21;
 
     Graph *graph;
     Character *player = nullptr;
@@ -39,8 +39,8 @@ protected:
     void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
-    void playMusic();
-    void stopMusic();
+    void play();
+    void pause();
 
 protected slots:
     void finished();

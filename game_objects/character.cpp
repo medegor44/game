@@ -8,7 +8,8 @@ using CommonThings::Directions;
 Character::Character(QPoint bp, int pixels, Graph *gameBoard)
     : AbstractGameObject(bp, pixels)
 {
-    lives = 3;
+    lives = int(gameBoard->getDist() * 1.05);
+
     summaryWayCost = 0;
     coinsScore = 0;
 
@@ -48,7 +49,6 @@ void Character::advance(int phase)
         break;
     }
 
-
     // персонаж полностью занял клетку
     if (int(x()) % cellWidth == 0 && int(y()) % cellWidth == 0) {
         // Проверить столкновения с игрвыми объектами
@@ -71,66 +71,6 @@ int Character::getCoinsScore() const
 {
     return coinsScore;
 }
-
-/* Устаревший метод
-void Character::checkCollisionsWithWall()
-{
-    if(currentDirecton == Directions::none)
-        return;
-
-    QPoint collidePoint;
-
-    // Выбор точки, относительно которой будет происходить проверка столкновения
-    // со стеной
-    switch (currentDirecton) {
-    case Directions::up:
-        collidePoint.rx() =  x() + (boundingRect().width() / 2);
-        collidePoint.ry() = y();
-        break;
-    case Directions::down:
-        collidePoint.rx() = x() + (boundingRect().width() / 2);
-        collidePoint.ry() = y() + boundingRect().height();
-        break;
-    case Directions::left:
-        collidePoint.rx() = x();
-        collidePoint.ry() = y() + (boundingRect().height() / 2);
-        break;
-    case Directions::right:
-        collidePoint.rx() = x() + boundingRect().width();
-        collidePoint.ry() = y() + (boundingRect().height() / 2);
-        break;
-    default:
-        // Ничего не делаем
-        return;
-    }
-
-    // При неотрицательных координатах необходимо определить,
-    // * есть выход за границы или нет
-
-    if(collidePoint.x() >= 0 && collidePoint.y() >= 0) {
-        collidePoint.rx() /= cellWidth;
-        collidePoint.ry() /= cellWidth;
-    }
-
-    if(gameBoard->getType(collidePoint) != Graph::TerrainType::wall)
-        // В точке возможного столкновения нет стены
-        return;
-
-    lives--;
-
-    // При нулевом значении жизней возвращаемся на стартовый чекпоинт,
-    // в противном случае на последний посещенный.
-    boardPos = (lives == 0 ? startCheckoint : currentCheckpoint)->getBoardPos();
-
-    currentDirecton = Directions::none;
-
-    if(lives == 0) // Восстанавливаем начальное значение жизней
-        lives = 3;
-
-    // Устанавливаем персонажа на новую позицию
-    setPos(boardPos.x() * cellWidth, boardPos.y() * cellWidth);
-}
-*/
 
 void Character::collideWithBonus(AbstractGameObject *obj)
 {
@@ -194,10 +134,12 @@ void Character::updateCost()
         return;
 
     summaryWayCost += cost; // Увеличить суммарную стоимость пути
+    lives -= cost;
 
     qDebug() << "Cost at" << boardPos
              << "is" << cost << '\n'
-             << "summaryCost =" << summaryWayCost;
+             << "summaryCost =" << summaryWayCost << '\n'
+             << "live =" << lives;
 }
 
 void Character::checkCollisionsWithItems()
@@ -229,7 +171,7 @@ void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
 void Character::keyPressEvent(QKeyEvent *event)
 {
-    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0)
+    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0 || paused)
         return;
 
     QString text = event->text();

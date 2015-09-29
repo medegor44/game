@@ -201,3 +201,8 @@ int Graph::getDist(QPoint begin, QPoint end)
     return a.getDistTo(end.y() * width + end.x());
 }
 
+int Graph::getDist()
+{
+    return getDist(startPos, endPos);
+}
+
