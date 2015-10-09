@@ -46,7 +46,7 @@ protected:
 
 signals:
     // Сообщение о столкновении с конечным чекпоинтом
-    void finished();
+    void finished(bool success);
 
 public slots:
     void pause() { paused = true; }

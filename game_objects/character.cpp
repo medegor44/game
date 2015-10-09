@@ -110,7 +110,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
             currentCheckpoint = chpoint;
             break;
         case Checkpoint::CheckpointType::end:
-            emit finished();
+            emit finished(true);
             qDebug() << "********* Level complete! *********";
             break;
         }
@@ -135,6 +135,9 @@ void Character::updateCost()
 
     summaryWayCost += cost; // Увеличить суммарную стоимость пути
     lives -= cost;
+
+    if (lives < 0)
+        emit finished(false);
 
     qDebug() << "Cost at" << boardPos
              << "is" << cost << '\n'

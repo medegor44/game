@@ -60,9 +60,15 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mousePressEvent(event);
 }
 
-void GameScene::finished()
+void GameScene::finished(bool success)
 {
     emit pause();
+
+    if (!success) {
+        QMessageBox::information(nullptr, "Statistic", "You fail.");
+        gameLoop.stop();
+        return;
+    }
 
     double dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
     double playerDist = player->getSummaryWayCost();

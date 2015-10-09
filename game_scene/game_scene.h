@@ -43,7 +43,7 @@ signals:
     void pause();
 
 protected slots:
-    void finished();
+    void finished(bool success);
 
 public:
     GameScene(QObject *parent);
