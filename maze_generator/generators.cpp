@@ -145,7 +145,7 @@ void MazeGenerator::smoothLandscape()
     }
 }
 
-Graph *MazeGenerator::getGraph() const
+Graph *MazeGenerator::getMaze() const
 {
     return graph; // Удалением старой версии занимается игрова сцена
 }

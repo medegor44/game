@@ -103,7 +103,7 @@ void GameScene::newGraph()
     generator.start(true);
 
     delete graph; // Создаем новое поле
-    graph = generator.getGraph();
+    graph = generator.getMaze();
 
     Generators::createCoins(graph, this, pixels); // Генерация монеток
 

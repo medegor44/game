@@ -55,7 +55,7 @@ private:
 public:
     MazeGenerator(int w, int h);
 
-    Graph *getGraph() const;
+    Graph *getMaze() const;
 
     void start(bool indefinite = false);
 
