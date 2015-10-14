@@ -10,8 +10,6 @@
 #include "../common_things.h"
 #include "checkpoint.h"
 
-#include "abstract_game_object.h"
-
 class Character : public AbstractGameObject
 {
     Q_OBJECT
@@ -47,6 +45,7 @@ protected:
 signals:
     // Сообщение о столкновении с конечным чекпоинтом
     void finished(bool success);
+    void finished(bool success, int remainig, int coins);
 
 public slots:
     void pause() { paused = true; }

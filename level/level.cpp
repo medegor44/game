@@ -6,7 +6,9 @@
 
 Level::Level(int w, int h, GameScene *scene)
 {
+    pixels = scene->getPixels();
     scene->clear();
+    loadTextures();
 
     Generators::MazeGenerator generator(w, h);
     generator.start(true);
@@ -22,7 +24,7 @@ void Level::paint(QPainter *painter, const QRectF &rect)
             QRectF irect = QRectF(x * pixels, y * pixels, pixels, pixels);
             if(rect.intersects(irect)) {
                 painter->drawPixmap(irect.toRect(),
-                                    textures[graph->getType(QPoint(x, y))]);
+                                    textures[maze->getType(QPoint(x, y))]);
             }
         }
 }
@@ -35,9 +37,9 @@ void Level::initGameObjects(GameScene *s)
                               maze, CommonThings::down));
 
     // Конечный
-    s->addItem(new Character(maze->getEndPos(), s->getPixels(),
-                             Checkpoint::CheckpointType::start,
-                             maze, CommonThings::up));
+    s->addItem(new Checkpoint(maze->getEndPos(), s->getPixels(),
+                              Checkpoint::CheckpointType::start,
+                              maze, CommonThings::up));
 
     // Объект игрка
     Character *player = new Character(maze->getStartPos(), s->getPixels(), maze);

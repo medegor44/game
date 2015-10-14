@@ -7,7 +7,6 @@
 #include <QPixmap>
 #include <QTimer>
 
-
 #include "game_model/graph.h"
 #include "maze_generator/generators.h"
 #include "game_objects/character.h"
@@ -22,6 +21,8 @@ protected:
     const int pixels = 30;
     int graphWidth = 21;
     int graphHeight = 21;
+
+    Level *level;
 
     Graph *graph;
     Character *player = nullptr;
@@ -42,8 +43,9 @@ signals:
     void play();
     void pause();
 
-protected slots:
-    void finished(bool success);
+public slots:
+    void finished(/*bool success, int a*/);
+    void acceptResult(bool success, int score);
 
 public:
     GameScene(QObject *parent);

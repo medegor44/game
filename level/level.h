@@ -4,9 +4,8 @@
 #include <QObject>
 #include <QPainter>
 
-#ifndef GAME_SCENE
-#include <game_scene/game_scene.h>
-#endif
+#include "game_model/graph.h"
+#include "game_scene/game_scene.h"
 
 class Level : public QObject
 {
@@ -15,21 +14,22 @@ class Level : public QObject
 private:
     Graph *maze;
     QVector<QPixmap> textures;
+    int pixels;
 
     void initGameObjects(GameScene *s);
     void loadTextures();
 
 private slots:
-    void computeResult(bool finished, int dist, int coins);
+    void computeResult(bool finished, int remaining, int coins);
 
 signals:
-    void result(bool success, int minDist = -1, int userDist = -1, int score = -1);
+    void result(bool success, int score = -1);
 
 public:
     explicit Level();
     Level(int w, int h, GameScene *scene);
 
-    void paint(QPainter *painter, QRectF &rect);
+    void paint(QPainter *painter, const QRectF &rect);
 
     ~Level() { delete maze; }
 };

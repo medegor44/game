@@ -5,7 +5,7 @@
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent)
-{
+{/*
     graph = new Graph(graphWidth, graphHeight);
     setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
 
@@ -13,7 +13,11 @@ GameScene::GameScene(QObject *parent)
 
     loadTextures();
 
-    initGameObjects();
+    initGameObjects();*/
+
+    level = new Level(graphWidth, graphHeight, this);
+    setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
+    setItemIndexMethod(QGraphicsScene::NoIndex);
 
     qDebug() << sceneRect();
 
@@ -21,7 +25,7 @@ GameScene::GameScene(QObject *parent)
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
-{
+{/*
     for(int y = 0; y < graph->getHeight(); y++)
         for(int x = 0; x < graph->getWidth(); x++) {
             QRectF irect = QRectF(x * pixels, y * pixels, pixels, pixels);
@@ -29,7 +33,9 @@ void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
                 painter->drawPixmap(irect.toRect(),
                                     landscapeTextures[graph->getType(QPoint(x, y))]);
             }
-        }
+        }*/
+
+    level->paint(painter, rect);
 }
 
 void GameScene::keyPressEvent(QKeyEvent *event)
@@ -60,8 +66,8 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
     QGraphicsScene::mousePressEvent(event);
 }
 
-void GameScene::finished(bool success)
-{
+void GameScene::finished(/*bool success, int a*/)
+{/*
     emit pause();
 
     if (!success) {
@@ -84,7 +90,16 @@ void GameScene::finished(bool success)
                              .arg(player->getSummaryWayCost())
                              .arg(player->getCoinsScore())
                              .arg(score + player->getCoinsScore()));
+    gameLoop.stop();*/
+
     gameLoop.stop();
+}
+
+void GameScene::acceptResult(bool success, int score)
+{
+    QMessageBox::information(nullptr, "Info", success ?
+                                 QString("Score = %1").arg(score) :
+                                 "You fail!");
 }
 
 int GameScene::getPixels() const
@@ -97,27 +112,35 @@ void GameScene::newGraph()
     if(gameLoop.isActive())
         return; // Ничего не делать, если игра запущена
 
-    clearScene(); // Очистить сцену от старых объектов
+//    clearScene(); // Очистить сцену от старых объектов
 
-    Generators::MazeGenerator generator(graphWidth, graphHeight);
-    generator.start(true);
+//    Generators::MazeGenerator generator(graphWidth, graphHeight);
+//    generator.start(true);
 
-    delete graph; // Создаем новое поле
-    graph = generator.getMaze();
+//    delete graph; // Создаем новое поле
+//    graph = generator.getMaze();
 
-    Generators::createCoins(graph, this, pixels); // Генерация монеток
+//    Generators::createCoins(graph, this, pixels); // Генерация монеток
 
-    initGameObjects();
+//    initGameObjects();
 
-    /* Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
-       ширины и высоты */
-    setSceneRect(0, 0, generator.getWidth() * pixels,
-                       generator.getHeight() * pixels);
+//    /* Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
+//       ширины и высоты */
+//    setSceneRect(0, 0, generator.getWidth() * pixels,
+//                       generator.getHeight() * pixels);
 
+//    update();
+
+    clear();
+    delete level;
+
+    level = new Level(graphWidth, graphHeight, this);
+    setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
     update();
 }
 
 void GameScene::clearScene()
+// Устаревший метод
 {
     QList<QGraphicsItem *> gameObjects = items();
 
@@ -135,7 +158,8 @@ void GameScene::loadTextures()
 }
 
 void GameScene::initGameObjects()
-{
+// Уствревший метод
+{/*
     addItem(new Checkpoint(graph->getStartPos(), pixels,
                            Checkpoint::CheckpointType::start,
                            graph, CommonThings::Directions::down));
@@ -151,11 +175,10 @@ void GameScene::initGameObjects()
 
     connect(player, &Character::finished, this, &GameScene::finished);
     connect(this, &GameScene::pause, player, &Character::pause);
-    connect(this, &GameScene::play, player, &Character::play);
+    connect(this, &GameScene::play, player, &Character::play);*/
 }
 
 GameScene::~GameScene()
 {
-    delete graph;
-    delete player;
+    delete level;
 }

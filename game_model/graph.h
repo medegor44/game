@@ -19,7 +19,7 @@ public:
     // Тип клетки поля
     enum TerrainType { wall, field, hill, sand, swamp/*, mountain*/ };
 
-    typedef QVector <QVector <TerrainType>> TerrainMatrix;
+    typedef QVector<QVector <TerrainType>> TerrainMatrix;
 
     // Максимальное число типов
     static const int maxTypes = 5;
