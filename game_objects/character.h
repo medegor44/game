@@ -16,10 +16,10 @@ class Character : public AbstractGameObject
 
 private:
     const int step = 3;
-    int summaryWayCost = 0;
+//    int summaryWayCost = 0;
     int coinsScore = 0; // Количество монеток, собранных игроком
-    bool isMoving = false;
-    bool paused = true;
+//    bool isMoving = false;
+    bool paused = false;
     int lives;
 
     // текущее направление робота
@@ -44,8 +44,8 @@ protected:
 
 signals:
     // Сообщение о столкновении с конечным чекпоинтом
-    void finished(bool success);
-    void finished(bool success, int remainig, int coins);
+//    void finished(bool success);
+    void finished(bool success, int remainig = -1, int coins = -1);
 
 public slots:
     void pause() { paused = true; }
@@ -55,7 +55,7 @@ public:
     Character(QPoint bp, int pixels, Graph *gameBoard);
 
     void advance(int phase) override;
-    int getSummaryWayCost() const;
+//    int getSummaryWayCost() const;
     int getCoinsScore() const;
 };
 

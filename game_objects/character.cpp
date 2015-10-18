@@ -10,7 +10,7 @@ Character::Character(QPoint bp, int pixels, Graph *gameBoard)
 {
     lives = int(gameBoard->getDist() * 1.05);
 
-    summaryWayCost = 0;
+//    summaryWayCost = 0;
     coinsScore = 0;
 
     this->gameBoard = gameBoard;
@@ -62,10 +62,10 @@ void Character::advance(int phase)
     }
 }
 
-int Character::getSummaryWayCost() const
-{
-    return summaryWayCost;
-}
+//int Character::getSummaryWayCost() const
+//{
+//    return summaryWayCost;
+//}
 
 int Character::getCoinsScore() const
 {
@@ -110,7 +110,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
             currentCheckpoint = chpoint;
             break;
         case Checkpoint::CheckpointType::end:
-            emit finished(true);
+            emit finished(true, lives, coinsScore);
             qDebug() << "********* Level complete! *********";
             break;
         }
@@ -133,7 +133,7 @@ void Character::updateCost()
     if(cost == 0) // В данном нпаправлении находится стена или персонаж не движется
         return;
 
-    summaryWayCost += cost; // Увеличить суммарную стоимость пути
+//    summaryWayCost += cost; // Увеличить суммарную стоимость пути
     lives -= cost;
 
     if (lives < 0)
@@ -141,7 +141,7 @@ void Character::updateCost()
 
     qDebug() << "Cost at" << boardPos
              << "is" << cost << '\n'
-             << "summaryCost =" << summaryWayCost << '\n'
+//             << "summaryCost =" << summaryWayCost << '\n'
              << "live =" << lives;
 }
 

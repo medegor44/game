@@ -11,7 +11,7 @@
 #include "maze_generator/generators.h"
 #include "game_objects/character.h"
 
-//#include "level/level.h"
+#include "level/level.h"
 
 typedef Graph::TerrainType Terrain_t;
 
@@ -24,7 +24,7 @@ protected:
     int graphWidth = 21;
     int graphHeight = 21;
 
-    Level *level;
+    Level *level = nullptr;
 
     Graph *graph;
     Character *player = nullptr;
@@ -32,7 +32,7 @@ protected:
     QTimer gameLoop;
     QPixmap landscapeTextures[Graph::maxTypes];
 
-    void newGraph();
+    void newLevel();
     void clearScene();
     void loadTextures();
     void initGameObjects();
@@ -52,7 +52,7 @@ public slots:
 public:
     GameScene(QObject *parent);
     ~GameScene();
-    int getPixels() const;
+//    int getPixels() const;
 };
 
 #endif // GAME_SCENE

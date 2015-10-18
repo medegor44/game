@@ -13,19 +13,21 @@ class Level : public QObject
     Q_OBJECT
 
 private:
+    const int pixels = 30;
     Graph *maze;
     QVector<QPixmap> textures;
-    int pixels;
 
     void initGameObjects(QGraphicsScene *s);
     void loadTextures();
 
+    typedef Graph::TerrainType Terrain_t;
+
 private slots:
-    void computeResult(bool finished, int remaining, int coins);
+    void computeResult(bool success, int remaining = -1, int coins = -1);
 
 signals:
     void result(bool success, int score = -1);
-    void finished();
+    void stop();
 
 public:
     explicit Level();

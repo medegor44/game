@@ -15,13 +15,13 @@ GameScene::GameScene(QObject *parent)
 
     initGameObjects();*/
 
-    level = new Level(graphWidth, graphHeight, this);
-    setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
-    qDebug() << sceneRect();
+    newLevel();
 
     connect(&gameLoop, &QTimer::timeout, this, &QGraphicsScene::advance);
+
+    qDebug() << sceneRect();
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
@@ -48,7 +48,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
         emit play();
         break;
     case Qt::Key_G:
-        newGraph();
+        newLevel();
         break;
     case Qt::Key_Escape:
         emit pause();
@@ -67,7 +67,8 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 }
 
 void GameScene::finished(/*bool success, int a*/)
-{/*
+{
+    /*
     emit pause();
 
     if (!success) {
@@ -77,7 +78,7 @@ void GameScene::finished(/*bool success, int a*/)
     }
 
     double dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
-    double playerDist = player->getSummaryWayCost();
+    double playerDist = player-> getSummaryWayCost();
 
     QString infoStr = "Perfect dist = %1\nYour dist = %2\nCoins = %3\n"
                       "Score = %4";
@@ -102,42 +103,45 @@ void GameScene::acceptResult(bool success, int score)
                                  "You fail!");
 }
 
-int GameScene::getPixels() const
-{
-    return pixels;
-}
+//int GameScene::getPixels() const
+//{
+//    return pixels;
+//}
 
-void GameScene::newGraph()
+void GameScene::newLevel()
 {
     if(gameLoop.isActive())
         return; // Ничего не делать, если игра запущена
+/*
+    clearScene(); // Очистить сцену от старых объектов
 
-//    clearScene(); // Очистить сцену от старых объектов
+    Generators::MazeGenerator generator(graphWidth, graphHeight);
+    generator.start(true);
 
-//    Generators::MazeGenerator generator(graphWidth, graphHeight);
-//    generator.start(true);
+    delete graph; // Создаем новое поле
+    graph = generator.getMaze();
 
-//    delete graph; // Создаем новое поле
-//    graph = generator.getMaze();
+    Generators::createCoins(graph, this, pixels); // Генерация монеток
 
-//    Generators::createCoins(graph, this, pixels); // Генерация монеток
+    initGameObjects();
 
-//    initGameObjects();
-
-//    /* Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
-//       ширины и высоты */
-//    setSceneRect(0, 0, generator.getWidth() * pixels,
-//                       generator.getHeight() * pixels);
-
-//    update();
+    //Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
+    //   ширины и высоты
+    setSceneRect(0, 0, generator.getWidth() * pixels,
+                       generator.getHeight() * pixels);
+*/
+    update();
 
     clear();
-    delete level;
+
+    if (level != nullptr)
+        delete level;
 
     level = new Level(graphWidth, graphHeight, this);
     setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
 
-    connect(level, &Level::finished, []() { gameLoop.stop() });
+    connect(level, &Level::stop, &gameLoop, &QTimer::stop);
+    connect(level, &Level::result, this, &GameScene::acceptResult);
     update();
 }
 

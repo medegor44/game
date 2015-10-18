@@ -6,7 +6,7 @@
 
 Level::Level(int w, int h, QGraphicsScene *scene)
 {
-    pixels = scene->getPixels();
+//    pixels = scene->getPixels();
     scene->clear();
     loadTextures();
 
@@ -14,7 +14,9 @@ Level::Level(int w, int h, QGraphicsScene *scene)
     generator.start(true);
     maze = generator.getMaze();
 
-    Generators::createCoins(maze, scene, scene->getPixels());
+//    Generators::createCoins(maze, scene, scene->getPixels());
+    Generators::createCoins(maze, scene, pixels);
+    initGameObjects(scene);
 }
 
 void Level::paint(QPainter *painter, const QRectF &rect)
@@ -32,22 +34,22 @@ void Level::paint(QPainter *painter, const QRectF &rect)
 void Level::initGameObjects(QGraphicsScene *s)
 {
     // Добавляем стартовый чекпоинт
-    s->addItem(new Checkpoint(maze->getStartPos(), s->getPixels(),
+    s->addItem(new Checkpoint(maze->getStartPos(), /*s->getPixels()*/pixels,
                               Checkpoint::CheckpointType::start,
                               maze, CommonThings::down));
 
     // Конечный
-    s->addItem(new Checkpoint(maze->getEndPos(), s->getPixels(),
-                              Checkpoint::CheckpointType::start,
+    s->addItem(new Checkpoint(maze->getEndPos(), /*s->getPixels()*/pixels,
+                              Checkpoint::CheckpointType::end,
                               maze, CommonThings::up));
 
     // Объект игрка
-    Character *player = new Character(maze->getStartPos(), s->getPixels(), maze);
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    s->setFocusItem(player);
-    s->addItem(player);
+    Character *player = new Character(maze->getStartPos(), /*s->getPixels()*/pixels, maze);
 
-//    connect(player, &Character::finished, s, &GameScene::finished);
+    player->setFlag(QGraphicsItem::ItemIsFocusable);
+    s->addItem(player);
+    s->setFocusItem(player);
+
     connect(player, &Character::finished, this, &Level::computeResult);
 }
 
@@ -62,11 +64,14 @@ void Level::loadTextures()
     textures[Terrain_t::swamp] = QPixmap(":/textures/swamp.png");
 }
 
-void Level::computeResult(bool finished, int remaining, int coins)
+void Level::computeResult(bool success, int remaining, int coins)
 {
-    emit finished();
-    if (!finished) // Игрок не дошел до финиша
+//    emit finished();
+    emit stop();
+    if (!success) { // Игрок не дошел до финиша
         emit result(false);
+        return;
+    }
 
     // Вычисление результата
     int score = (remaining + coins) * 100;

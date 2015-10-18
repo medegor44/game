@@ -3,8 +3,8 @@
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
-    player = new QMediaPlayer(this);
-    player->setMedia(QUrl::fromLocalFile("C:/Projects/C++/game/sounds/sound.mp3"));
+//    player = new QMediaPlayer(this);
+//    player->setMedia(QUrl::fromLocalFile("C:/Projects/C++/game/sounds/sound.mp3"));
 
     mainLayout = new QHBoxLayout(this);
 
