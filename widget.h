@@ -11,8 +11,9 @@
 #include <QMessageBox>
 #include <QHBoxLayout>
 
-#include <QtMultimedia>
+//#include <QtMultimedia>
 
+#include <QtWidgets>
 #include "game_scene/game_scene.h"
 
 class Widget : public QWidget
@@ -20,7 +21,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 private:
-    QMediaPlayer *player;
+//    QMediaPlayer *player;
     QHBoxLayout *mainLayout;
     QGraphicsView *view;
     GameScene *scene;

@@ -4,7 +4,7 @@
 #include "game_objects/checkpoint.h"
 #include "game_objects/character.h"
 
-Level::Level(int w, int h, GameScene *scene)
+Level::Level(int w, int h, QGraphicsScene *scene)
 {
     pixels = scene->getPixels();
     scene->clear();
@@ -29,7 +29,7 @@ void Level::paint(QPainter *painter, const QRectF &rect)
         }
 }
 
-void Level::initGameObjects(GameScene *s)
+void Level::initGameObjects(QGraphicsScene *s)
 {
     // Добавляем стартовый чекпоинт
     s->addItem(new Checkpoint(maze->getStartPos(), s->getPixels(),
@@ -47,7 +47,7 @@ void Level::initGameObjects(GameScene *s)
     s->setFocusItem(player);
     s->addItem(player);
 
-    connect(player, &Character::finished, s, &GameScene::finished);
+//    connect(player, &Character::finished, s, &GameScene::finished);
     connect(player, &Character::finished, this, &Level::computeResult);
 }
 
@@ -64,6 +64,7 @@ void Level::loadTextures()
 
 void Level::computeResult(bool finished, int remaining, int coins)
 {
+    emit finished();
     if (!finished) // Игрок не дошел до финиша
         emit result(false);
 

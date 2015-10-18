@@ -11,6 +11,8 @@
 #include "maze_generator/generators.h"
 #include "game_objects/character.h"
 
+//#include "level/level.h"
+
 typedef Graph::TerrainType Terrain_t;
 
 class GameScene : public QGraphicsScene

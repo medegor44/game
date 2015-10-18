@@ -136,6 +136,8 @@ void GameScene::newGraph()
 
     level = new Level(graphWidth, graphHeight, this);
     setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
+
+    connect(level, &Level::finished, []() { gameLoop.stop() });
     update();
 }
 
