@@ -22,7 +22,7 @@ protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *) = 0;
 
 public:
-    AbstractGameObject(QPoint bp, int pixels);
+    AbstractGameObject(QPoint bp, int pixels, QGraphicsItem *parent = 0);
 
     QRectF boundingRect() const
     { return QRectF(0, 0, cellWidth, cellWidth); }

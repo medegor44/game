@@ -5,8 +5,8 @@
 using CommonThings::Directions;
 
 Checkpoint::Checkpoint(QPoint bp, int pixels, CheckpointType t, Graph *g,
-                       CommonThings::Directions dir)
-    : AbstractGameObject(bp, pixels)
+                       CommonThings::Directions dir, QGraphicsItem *parent)
+    : AbstractGameObject(bp, pixels, parent)
 {
     type = t;
     startDirection = dir;

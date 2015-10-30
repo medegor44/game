@@ -6,6 +6,7 @@
 #include <QStack>
 #include <QTextStream>
 #include <QFile>
+#include <QGraphicsObject>
 #include <QGraphicsScene>
 
 #include <random>
@@ -68,7 +69,7 @@ public:
     void print();
 };
 
-void createCoins(Graph *g, QGraphicsScene *scene, int pixels);
+void createCoins(Graph *g, QGraphicsScene *scene, int pixels, QGraphicsObject *parent = 0);
 
 }
 

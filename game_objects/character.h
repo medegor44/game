@@ -52,7 +52,7 @@ public slots:
     void play() { paused = false; }
 
 public:
-    Character(QPoint bp, int pixels, Graph *gameBoard);
+    Character(QPoint bp, int pixels, Graph *gameBoard, QGraphicsItem *parent = 0);
 
     void advance(int phase) override;
 //    int getSummaryWayCost() const;

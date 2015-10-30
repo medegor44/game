@@ -4,11 +4,12 @@
 #include <QObject>
 #include <QPainter>
 #include <QGraphicsScene>
+#include <QGraphicsObject>
 
 #include "game_model/graph.h"
 //#include "game_scene/game_scene.h"
 
-class Level : public QObject
+class Level : public QGraphicsObject
 {
     Q_OBJECT
 
@@ -33,7 +34,8 @@ public:
     explicit Level();
     Level(int w, int h, QGraphicsScene *scene);
 
-    void paint(QPainter *painter, const QRectF &rect);
+    void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    QRectF boundingRect() const;
 
     ~Level() { delete maze; }
 };

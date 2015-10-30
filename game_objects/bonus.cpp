@@ -1,7 +1,7 @@
 #include "bonus.h"
 
-Bonus::Bonus(BonusType t, QPoint bp, int pixels)
-    : AbstractGameObject(bp, pixels)
+Bonus::Bonus(BonusType t, QPoint bp, int pixels, QGraphicsItem *parent)
+    : AbstractGameObject(bp, pixels, parent)
 {
     type = t;
 

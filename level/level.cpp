@@ -19,16 +19,18 @@ Level::Level(int w, int h, QGraphicsScene *scene)
     initGameObjects(scene);
 }
 
-void Level::paint(QPainter *painter, const QRectF &rect)
+void Level::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
 {
     for(int y = 0; y < maze->getHeight(); y++)
         for(int x = 0; x < maze->getWidth(); x++) {
-            QRectF irect = QRectF(x * pixels, y * pixels, pixels, pixels);
-            if(rect.intersects(irect)) {
-                painter->drawPixmap(irect.toRect(),
+                painter->drawPixmap(QRect(x * pixels, y * pixels, pixels, pixels),
                                     textures[maze->getType(QPoint(x, y))]);
-            }
         }
+}
+
+QRectF Level::boundingRect() const
+{
+    return QRectF(0, 0, maze->getWidth() * pixels, maze->getHeight() * pixels);
 }
 
 void Level::initGameObjects(QGraphicsScene *s)
@@ -36,15 +38,15 @@ void Level::initGameObjects(QGraphicsScene *s)
     // Добавляем стартовый чекпоинт
     s->addItem(new Checkpoint(maze->getStartPos(), /*s->getPixels()*/pixels,
                               Checkpoint::CheckpointType::start,
-                              maze, CommonThings::down));
+                              maze, CommonThings::down, this));
 
     // Конечный
     s->addItem(new Checkpoint(maze->getEndPos(), /*s->getPixels()*/pixels,
                               Checkpoint::CheckpointType::end,
-                              maze, CommonThings::up));
+                              maze, CommonThings::up, this));
 
     // Объект игрка
-    Character *player = new Character(maze->getStartPos(), /*s->getPixels()*/pixels, maze);
+    Character *player = new Character(maze->getStartPos(), /*s->getPixels()*/pixels, maze, this);
 
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     s->addItem(player);

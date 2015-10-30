@@ -212,7 +212,7 @@ void MazeGenerator::print()
 }
 
 
-void Generators::createCoins(Graph *g, QGraphicsScene *scene, int pixels)
+void Generators::createCoins(Graph *g, QGraphicsScene *scene, int pixels, QGraphicsObject *parent)
 {
     const double ratio = 1.0 / 7.0;
     QList<QPoint> usedPoints;
@@ -229,7 +229,7 @@ void Generators::createCoins(Graph *g, QGraphicsScene *scene, int pixels)
 
 //        scene->items();
         if(g->getType(randPoint) != Graph::wall && !usedPoints.contains(randPoint)) {
-            scene->addItem(new Bonus(Bonus::BonusType::coin, randPoint, pixels));
+            scene->addItem(new Bonus(Bonus::BonusType::coin, randPoint, pixels, parent));
             usedPoints.push_back(randPoint);
             i++;
         }

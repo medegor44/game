@@ -27,7 +27,8 @@ private:
 
 public:
     Checkpoint(QPoint bp, int pixels, CheckpointType t, Graph *g,
-               CommonThings::Directions dir = CommonThings::down);
+               CommonThings::Directions dir = CommonThings::down,
+               QGraphicsItem *parent = 0);
 
     void visit(); // Отметить чекпоинт, как посещенный
 

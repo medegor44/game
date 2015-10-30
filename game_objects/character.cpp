@@ -5,8 +5,8 @@
 
 using CommonThings::Directions;
 
-Character::Character(QPoint bp, int pixels, Graph *gameBoard)
-    : AbstractGameObject(bp, pixels)
+Character::Character(QPoint bp, int pixels, Graph *gameBoard, QGraphicsItem *parent)
+    : AbstractGameObject(bp, pixels, parent)
 {
     lives = int(gameBoard->getDist() * 1.05);
 

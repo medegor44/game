@@ -35,7 +35,7 @@ void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
             }
         }*/
 
-    level->paint(painter, rect);
+    level->paint(painter, 0, 0);
 }
 
 void GameScene::keyPressEvent(QKeyEvent *event)
