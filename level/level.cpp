@@ -4,10 +4,11 @@
 #include "game_objects/checkpoint.h"
 #include "game_objects/character.h"
 
-Level::Level(int w, int h, QGraphicsScene *scene)
+Level::Level(int w, int h)
 {
 //    pixels = scene->getPixels();
-    scene->clear();
+//    scene->clear();
+//    scene->addItem(this);
     loadTextures();
 
     Generators::MazeGenerator generator(w, h);
@@ -15,8 +16,8 @@ Level::Level(int w, int h, QGraphicsScene *scene)
     maze = generator.getMaze();
 
 //    Generators::createCoins(maze, scene, scene->getPixels());
-    Generators::createCoins(maze, scene, pixels);
-    initGameObjects(scene);
+
+//    initGameObjects();
 }
 
 void Level::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -33,8 +34,11 @@ QRectF Level::boundingRect() const
     return QRectF(0, 0, maze->getWidth() * pixels, maze->getHeight() * pixels);
 }
 
-void Level::initGameObjects(QGraphicsScene *s)
+void Level::initGameObjects()
 {
+    QGraphicsScene *s = scene();
+    Generators::createCoins(maze, s, pixels, this);
+
     // Добавляем стартовый чекпоинт
     s->addItem(new Checkpoint(maze->getStartPos(), /*s->getPixels()*/pixels,
                               Checkpoint::CheckpointType::start,
@@ -78,5 +82,10 @@ void Level::computeResult(bool success, int remaining, int coins)
     // Вычисление результата
     int score = (remaining + coins) * 100;
     emit result(true, score);
+}
+
+Level::~Level()
+{
+    delete maze;
 }
 

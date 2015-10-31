@@ -151,7 +151,7 @@ void Character::checkCollisionsWithItems()
     QList<QGraphicsItem *> items = scene()->collidingItems(this);
 
     for (auto i = items.begin(); i != items.end(); i++) {
-        if ((*i) == this)
+        if ((*i) == this || (*i) == parentItem())
             continue;
         else {
             // Привести к типу абстрактного игрового объекта

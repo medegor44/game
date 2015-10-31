@@ -5,16 +5,7 @@
 
 GameScene::GameScene(QObject *parent)
     : QGraphicsScene(parent)
-{/*
-    graph = new Graph(graphWidth, graphHeight);
-    setSceneRect(0, 0, graph->getWidth() * pixels, graph->getHeight() * pixels);
-
-    setItemIndexMethod(QGraphicsScene::NoIndex);
-
-    loadTextures();
-
-    initGameObjects();*/
-
+{
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
     newLevel();
@@ -25,16 +16,7 @@ GameScene::GameScene(QObject *parent)
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
-{/*
-    for(int y = 0; y < graph->getHeight(); y++)
-        for(int x = 0; x < graph->getWidth(); x++) {
-            QRectF irect = QRectF(x * pixels, y * pixels, pixels, pixels);
-            if(rect.intersects(irect)) {
-                painter->drawPixmap(irect.toRect(),
-                                    landscapeTextures[graph->getType(QPoint(x, y))]);
-            }
-        }*/
-
+{
     level->paint(painter, 0, 0);
 }
 
@@ -68,31 +50,6 @@ void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
 
 void GameScene::finished(/*bool success, int a*/)
 {
-    /*
-    emit pause();
-
-    if (!success) {
-        QMessageBox::information(nullptr, "Statistic", "You fail.");
-        gameLoop.stop();
-        return;
-    }
-
-    double dist = graph->getDist(graph->getStartPos(), graph->getEndPos());
-    double playerDist = player-> getSummaryWayCost();
-
-    QString infoStr = "Perfect dist = %1\nYour dist = %2\nCoins = %3\n"
-                      "Score = %4";
-
-    double ratio = playerDist / dist;
-    int score = dist / ratio * 100;
-
-    QMessageBox::information(nullptr, "Statistic", infoStr
-                             .arg(dist)
-                             .arg(player->getSummaryWayCost())
-                             .arg(player->getCoinsScore())
-                             .arg(score + player->getCoinsScore()));
-    gameLoop.stop();*/
-
     gameLoop.stop();
 }
 
@@ -103,41 +60,24 @@ void GameScene::acceptResult(bool success, int score)
                                  "You fail!");
 }
 
-//int GameScene::getPixels() const
-//{
-//    return pixels;
-//}
-
 void GameScene::newLevel()
 {
     if(gameLoop.isActive())
         return; // Ничего не делать, если игра запущена
-/*
-    clearScene(); // Очистить сцену от старых объектов
-
-    Generators::MazeGenerator generator(graphWidth, graphHeight);
-    generator.start(true);
-
-    delete graph; // Создаем новое поле
-    graph = generator.getMaze();
-
-    Generators::createCoins(graph, this, pixels); // Генерация монеток
-
-    initGameObjects();
-
-    //Размеры могли измениться, т.к. алгоритм работает с нечтными значениями
-    //   ширины и высоты
-    setSceneRect(0, 0, generator.getWidth() * pixels,
-                       generator.getHeight() * pixels);
-*/
-    update();
-
-    clear();
 
     if (level != nullptr)
         delete level;
 
-    level = new Level(graphWidth, graphHeight, this);
+    qDebug("Count of items before QGraphicsScene::clear() = %d", items().size());
+
+    clear();
+
+    qDebug("Count of items after QGraphicsScene::clear() = %d", items().size());
+
+    level = new Level(graphWidth, graphHeight);
+    addItem(level);
+
+    level->initGameObjects();
     setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
 
     connect(level, &Level::stop, &gameLoop, &QTimer::stop);
@@ -150,8 +90,9 @@ void GameScene::clearScene()
 {
     QList<QGraphicsItem *> gameObjects = items();
 
-    for (QGraphicsItem *obj : gameObjects)
+    for (QGraphicsItem *obj : gameObjects) {
         removeItem(obj);
+    }
 }
 
 void GameScene::loadTextures()

@@ -227,7 +227,6 @@ void Generators::createCoins(Graph *g, QGraphicsScene *scene, int pixels, QGraph
         QPoint randPoint(random() % g->getWidth(),
                          random() % g->getHeight());
 
-//        scene->items();
         if(g->getType(randPoint) != Graph::wall && !usedPoints.contains(randPoint)) {
             scene->addItem(new Bonus(Bonus::BonusType::coin, randPoint, pixels, parent));
             usedPoints.push_back(randPoint);

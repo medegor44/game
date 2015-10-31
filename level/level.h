@@ -18,7 +18,6 @@ private:
     Graph *maze;
     QVector<QPixmap> textures;
 
-    void initGameObjects(QGraphicsScene *s);
     void loadTextures();
 
     typedef Graph::TerrainType Terrain_t;
@@ -32,12 +31,13 @@ signals:
 
 public:
     explicit Level();
-    Level(int w, int h, QGraphicsScene *scene);
+    Level(int w, int h);
 
+    void initGameObjects();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
     QRectF boundingRect() const;
 
-    ~Level() { delete maze; }
+    ~Level();
 };
 
 #endif // LEVEL
