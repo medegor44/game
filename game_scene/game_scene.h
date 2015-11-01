@@ -33,26 +33,21 @@ protected:
     QPixmap landscapeTextures[Graph::maxTypes];
 
     void newLevel();
-    void clearScene();
-    void loadTextures();
-    void initGameObjects();
 
-    void drawBackground(QPainter *painter, const QRectF &rect);
+    void drawBackground(QPainter *painter, const QRectF &);
     void keyPressEvent(QKeyEvent *event);
-    void mousePressEvent(QGraphicsSceneMouseEvent *event);
 
 signals:
     void play();
     void pause();
 
 public slots:
-    void finished(/*bool success, int a*/);
+    void finished();
     void acceptResult(bool success, int score);
 
 public:
     GameScene(QObject *parent);
     ~GameScene();
-//    int getPixels() const;
 };
 
 #endif // GAME_SCENE

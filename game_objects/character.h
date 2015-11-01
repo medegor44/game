@@ -3,7 +3,6 @@
 
 #include <QKeyEvent>
 #include <QGraphicsScene>
-#include <QQueue>
 #include <QDebug>
 
 #include "../game_model/graph.h"
@@ -15,28 +14,31 @@ class Character : public AbstractGameObject
     Q_OBJECT
 
 private:
-    const int step = 3;
-//    int summaryWayCost = 0;
+    const int step = 3; // Количество пикселей, на котороее персонаж продвигается за тик таймера.
     int coinsScore = 0; // Количество монеток, собранных игроком
-//    bool isMoving = false;
-    bool paused = false;
-    int lives;
+    bool paused = false; // Флаг, запрещающий движение, если игра поставлена на паузу
+    int lives; // Количество жизней
 
     // текущее направление робота
     CommonThings::Directions currentDirecton;
 
-    Graph *gameBoard;
+    Graph *gameBoard; // Граф игрового поля
 
-    Checkpoint *startCheckoint = nullptr;
+    Checkpoint *startCheckoint = nullptr; // Стартовый чекпоинт
+    // TODO Зачем тут вообще нужен currentCheckpoint, да и вообще тип Checkpoint::common?
     Checkpoint *currentCheckpoint = nullptr;
 
+    QPoint start;
+    QPoint end;
 
-    void checkCollisionsWithWall(); // Устаревший метод
-    void checkCollisionsWithItems();
+    void checkCollisionsWithItems(); // Проверка столкновений с объектами на сцене
 
-    void collideWithBonus(AbstractGameObject *obj);
-    void collideWithCheckpoint(AbstractGameObject *obj);
-    void updateCost();
+    void collideWithBonus(AbstractGameObject *obj); // Обработка столкновений с бонусом
+
+    // Устаревший метод!
+    void collideWithCheckpoint(AbstractGameObject *obj); // Обработка столкновений с чекпоинтом
+
+    void updateLivesCount(); // Обновление стоимости пройденного пути
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
@@ -44,7 +46,6 @@ protected:
 
 signals:
     // Сообщение о столкновении с конечным чекпоинтом
-//    void finished(bool success);
     void finished(bool success, int remainig = -1, int coins = -1);
 
 public slots:
@@ -55,8 +56,6 @@ public:
     Character(QPoint bp, int pixels, Graph *gameBoard, QGraphicsItem *parent = 0);
 
     void advance(int phase) override;
-//    int getSummaryWayCost() const;
-    int getCoinsScore() const;
 };
 
 #endif // CHARACTER

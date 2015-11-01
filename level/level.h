@@ -14,13 +14,13 @@ class Level : public QGraphicsObject
     Q_OBJECT
 
 private:
-    const int pixels = 30;
-    Graph *maze;
-    QVector<QPixmap> textures;
+    typedef Graph::TerrainType Terrain_t;
+
+    const int pixels = 30; // Размер стороны тайла в пикселях
+    Graph *maze; // Лабиринт
+    QVector<QPixmap> textures; // Текстуры
 
     void loadTextures();
-
-    typedef Graph::TerrainType Terrain_t;
 
 private slots:
     void computeResult(bool success, int remaining = -1, int coins = -1);

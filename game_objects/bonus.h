@@ -11,8 +11,8 @@ public:
     enum BonusType { live, coin }; // Типы бонусов
 
 private:
-    BonusType type;
-    bool active_m = true;
+    BonusType type; // Тип бонуса
+    bool active_m = true; // Флаг, показывающий, собран бонус или нет
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);

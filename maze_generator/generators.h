@@ -69,7 +69,7 @@ public:
     void print();
 };
 
-void createCoins(Graph *g, QGraphicsScene *scene, int pixels, QGraphicsObject *parent = 0);
+void createCoins(Graph *g, int pixels, QGraphicsObject *parent = 0);
 
 }
 

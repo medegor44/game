@@ -56,7 +56,7 @@ void Graph::initBoard()
     }
 }
 
-// ### Получение и установка типа точки с координатами p ###
+// Получение типа точки с координатами p
 Graph::TerrainType Graph::getType(QPoint p) const
 {
     // Все, что выходит за пределами игровго поля - стена
@@ -66,6 +66,7 @@ Graph::TerrainType Graph::getType(QPoint p) const
     return board[p.y()][p.x()];
 }
 
+// Установка типа точки с координатами p
 void Graph::setCellType(QPoint p, TerrainType t)
 {
     Q_ASSERT_X(BETWEEN(p.x(), 0, width) && BETWEEN(p.y(), 0, height),
@@ -97,11 +98,13 @@ void Graph::setCellType(QPoint p, TerrainType t)
 
 int Graph::getCellType(QPoint from, QPoint to)
 {
+    // Путь, соединяющий точку, не приндлежащую множеству вершин графа, по умолчанию равен wall
     if (!(graphRect.contains(from) && graphRect.contains(to)))
         return TerrainType::wall;
 
     TerrainType typeFrom = board[from.y()][from.x()];
     TerrainType typeTo = board[to.y()][to.x()];
+
 
     if (typeFrom == TerrainType::wall || typeTo == TerrainType::wall)
         return TerrainType::wall;
@@ -111,7 +114,6 @@ int Graph::getCellType(QPoint from, QPoint to)
 
 int Graph::getCellType(QPoint from, CommonThings::Directions dir)
 {
-    TerrainType t;
     QPoint to;
 
     // Выбор стоимости точки, в сторону которой происходит движение
@@ -131,23 +133,14 @@ int Graph::getCellType(QPoint from, CommonThings::Directions dir)
     case CommonThings::none:
         to = from;
         break;
-    default:
-        // Метод гарантирует корректную обработку случая dir == Dorections::none
-        break;
     }
-
-//    if(t == TerrainType::wall)
-//        // При встрече со стеной персонаж погибает
-//        return t;
-//    else // В остальных случаях возвращаем максимальное значение
-//        return qMax(t, board[from.y()][from.x()]);
 
     return getCellType(from, to);
 }
 
 Matrix Graph::toAdejecencyMatrix()
 {
-    Matrix adjecencyMatrix(width * height); // Матрица width x height
+    Matrix adjecencyMatrix(width * height); // Матрица width * height
     for(QVector <int> &v : adjecencyMatrix)
         v.resize(width * height);
 
@@ -155,16 +148,7 @@ Matrix Graph::toAdejecencyMatrix()
         int first = i->y1() * width + i->x1(); // Получение индексов вершины
         int second = i->y2() * width + i->x2();
 
-        // Получение весов первой и второй веришины, которые связаны общим ребром
-        int tFirst = board[i->y1()][i->x1()];
-        int tSecond = board[i->y2()][i->x2()];
-
-        // У стены самый высокий приоритет
-//        if(tFirst == TerrainType::wall || tSecond == TerrainType::wall)
-//            adjecencyMatrix[first][second] = TerrainType::wall;
-//        else // В противном случе выбор максимального значения
-//            adjecencyMatrix[first][second] = qMax(tFirst, tSecond);
-
+        // Установка стоимости перемещения из вершины first в second
         adjecencyMatrix[first][second] = getCellType(i->p1(), i->p2());
     }
 

@@ -15,7 +15,7 @@ GameScene::GameScene(QObject *parent)
     qDebug() << sceneRect();
 }
 
-void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
+void GameScene::drawBackground(QPainter *painter, const QRectF &)
 {
     level->paint(painter, 0, 0);
 }
@@ -42,13 +42,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     QGraphicsScene::keyPressEvent(event);
 }
 
-void GameScene::mousePressEvent(QGraphicsSceneMouseEvent *event)
-{
-    qDebug() << event->scenePos();
-    QGraphicsScene::mousePressEvent(event);
-}
-
-void GameScene::finished(/*bool success, int a*/)
+void GameScene::finished()
 {
     gameLoop.stop();
 }
@@ -65,64 +59,25 @@ void GameScene::newLevel()
     if(gameLoop.isActive())
         return; // Ничего не делать, если игра запущена
 
-    if (level != nullptr)
+    if (level != nullptr) // Удалить старый уровень, если он был создан
         delete level;
 
     qDebug("Count of items before QGraphicsScene::clear() = %d", items().size());
 
-    clear();
+    clear(); // Очистить сцену
 
     qDebug("Count of items after QGraphicsScene::clear() = %d", items().size());
 
+    // Создание нового уровня и его инициализация
     level = new Level(graphWidth, graphHeight);
     addItem(level);
-
     level->initGameObjects();
-    setSceneRect(0, 0, (graphWidth + 2) * pixels, (graphHeight + 2) * pixels);
+
+    setSceneRect(0, 0, (graphWidth + 1) * pixels, (graphHeight + 1) * pixels);
 
     connect(level, &Level::stop, &gameLoop, &QTimer::stop);
     connect(level, &Level::result, this, &GameScene::acceptResult);
     update();
-}
-
-void GameScene::clearScene()
-// Устаревший метод
-{
-    QList<QGraphicsItem *> gameObjects = items();
-
-    for (QGraphicsItem *obj : gameObjects) {
-        removeItem(obj);
-    }
-}
-
-void GameScene::loadTextures()
-{
-    landscapeTextures[Terrain_t::wall] = QPixmap(":/textures/bricks.png");
-    landscapeTextures[Terrain_t::field] = QPixmap(":/textures/grass.png");
-    landscapeTextures[Terrain_t::hill] = QPixmap(":/textures/hill.png");
-    landscapeTextures[Terrain_t::sand] = QPixmap(":/textures/sand.png");
-    landscapeTextures[Terrain_t::swamp] = QPixmap(":/textures/swamp.png");
-}
-
-void GameScene::initGameObjects()
-// Уствревший метод
-{/*
-    addItem(new Checkpoint(graph->getStartPos(), pixels,
-                           Checkpoint::CheckpointType::start,
-                           graph, CommonThings::Directions::down));
-
-    addItem(new Checkpoint(graph->getEndPos(), pixels,
-                           Checkpoint::CheckpointType::end, graph,
-                           CommonThings::Directions::up));
-
-    player = new Character(graph->getStartPos(), pixels, graph);
-    player->setFlag(QGraphicsItem::ItemIsFocusable);
-    setFocusItem(player);
-    addItem(player);
-
-    connect(player, &Character::finished, this, &GameScene::finished);
-    connect(this, &GameScene::pause, player, &Character::pause);
-    connect(this, &GameScene::play, player, &Character::play);*/
 }
 
 GameScene::~GameScene()

@@ -6,18 +6,11 @@
 
 Level::Level(int w, int h)
 {
-//    pixels = scene->getPixels();
-//    scene->clear();
-//    scene->addItem(this);
-    loadTextures();
+    loadTextures(); // Загрузка текстур
 
-    Generators::MazeGenerator generator(w, h);
-    generator.start(true);
+    Generators::MazeGenerator generator(w, h); // Инициализация генератора лабиринта
+    generator.start(true); // Генерация уровня
     maze = generator.getMaze();
-
-//    Generators::createCoins(maze, scene, scene->getPixels());
-
-//    initGameObjects();
 }
 
 void Level::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *)
@@ -36,25 +29,21 @@ QRectF Level::boundingRect() const
 
 void Level::initGameObjects()
 {
-    QGraphicsScene *s = scene();
-    Generators::createCoins(maze, s, pixels, this);
+    Generators::createCoins(maze, pixels, this); // Генерация монеток на поле
 
     // Добавляем стартовый чекпоинт
-    s->addItem(new Checkpoint(maze->getStartPos(), /*s->getPixels()*/pixels,
-                              Checkpoint::CheckpointType::start,
-                              maze, CommonThings::down, this));
+    new Checkpoint(maze->getStartPos(), pixels,Checkpoint::CheckpointType::start,
+                                  maze, CommonThings::down, this);
 
     // Конечный
-    s->addItem(new Checkpoint(maze->getEndPos(), /*s->getPixels()*/pixels,
-                              Checkpoint::CheckpointType::end,
-                              maze, CommonThings::up, this));
+    new Checkpoint(maze->getEndPos(), pixels, Checkpoint::CheckpointType::end,
+                                  maze, CommonThings::up, this);
 
     // Объект игрка
-    Character *player = new Character(maze->getStartPos(), /*s->getPixels()*/pixels, maze, this);
+    Character *player = new Character(maze->getStartPos(), pixels, maze, this);
 
     player->setFlag(QGraphicsItem::ItemIsFocusable);
-    s->addItem(player);
-    s->setFocusItem(player);
+    scene()->setFocusItem(player);
 
     connect(player, &Character::finished, this, &Level::computeResult);
 }
@@ -71,9 +60,9 @@ void Level::loadTextures()
 }
 
 void Level::computeResult(bool success, int remaining, int coins)
+// Вычисление результата игры
 {
-//    emit finished();
-    emit stop();
+    emit stop(); // Сообщить об окончании игры
     if (!success) { // Игрок не дошел до финиша
         emit result(false);
         return;

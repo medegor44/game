@@ -17,7 +17,7 @@ class Graph
 {
 public:
     // Тип клетки поля
-    enum TerrainType { wall, field, hill, sand, swamp/*, mountain*/ };
+    enum TerrainType { wall, field, hill, sand, swamp };
 
     typedef QVector<QVector <TerrainType>> TerrainMatrix;
 
@@ -46,6 +46,7 @@ private:
     Matrix toAdejecencyMatrix(); // Преобразование в матрицу смежности
     void initBoard(); // Инициализация матрицы поля
     void initEdgesFor(int x, int y); // Инициализация путей для точки (x; y)
+    int getCellType(QPoint from, QPoint to);
 
 public:
     Graph(int w, int h);
@@ -57,7 +58,6 @@ public:
 
     // Получить стоимость перемещения в клеку поля, распололженную в направлении dir
     int getCellType(QPoint from, CommonThings::Directions dir);
-    int getCellType(QPoint from, QPoint to);
 
     // Проверить правильно ли создано поле
     bool checkBoard(QPoint begin, QPoint end);

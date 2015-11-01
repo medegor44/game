@@ -2,20 +2,22 @@
 
 #include "bonus.h"
 
-
 using CommonThings::Directions;
 
 Character::Character(QPoint bp, int pixels, Graph *gameBoard, QGraphicsItem *parent)
     : AbstractGameObject(bp, pixels, parent)
 {
-    lives = int(gameBoard->getDist() * 1.05);
+    lives = int(gameBoard->getDist() * 1.15);
 
-//    summaryWayCost = 0;
     coinsScore = 0;
 
     this->gameBoard = gameBoard;
 
     currentDirecton = Directions::none;
+
+    // Благодаря этим строчкам, суть чекпоинта вообще отпадает
+    start = gameBoard->getStartPos();
+    end = gameBoard->getEndPos();
 
     setObjectName("Character");
 }
@@ -30,7 +32,7 @@ void Character::advance(int phase)
         return;
     }
 
-    updateCost(); // Обновить стоимость пройденного пути
+    updateLivesCount(); // Обновить стоимость пройденного пути
 
     switch (currentDirecton) {
     case Directions::down:
@@ -59,17 +61,12 @@ void Character::advance(int phase)
         // Сдвинуть объект на новыую позицию относительно игрового поля
         boardPos.rx() = int(x()) / cellWidth;
         boardPos.ry() = int(y()) / cellWidth;
+
+        if (boardPos == end) {
+            qDebug() << "********* Level complete! *********";
+            emit finished(true, lives, coinsScore);
+        }
     }
-}
-
-//int Character::getSummaryWayCost() const
-//{
-//    return summaryWayCost;
-//}
-
-int Character::getCoinsScore() const
-{
-    return coinsScore;
 }
 
 void Character::collideWithBonus(AbstractGameObject *obj)
@@ -92,6 +89,7 @@ void Character::collideWithBonus(AbstractGameObject *obj)
 }
 
 void Character::collideWithCheckpoint(AbstractGameObject *obj)
+// Устаревший метод!
 {
     Checkpoint *chpoint = dynamic_cast<Checkpoint *> (obj);
 
@@ -119,7 +117,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
     }
 }
 
-void Character::updateCost()
+void Character::updateLivesCount()
 {
     if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0
             || currentDirecton == Directions::none) {
@@ -133,7 +131,6 @@ void Character::updateCost()
     if(cost == 0) // В данном нпаправлении находится стена или персонаж не движется
         return;
 
-//    summaryWayCost += cost; // Увеличить суммарную стоимость пути
     lives -= cost;
 
     if (lives < 0)
@@ -141,7 +138,6 @@ void Character::updateCost()
 
     qDebug() << "Cost at" << boardPos
              << "is" << cost << '\n'
-//             << "summaryCost =" << summaryWayCost << '\n'
              << "live =" << lives;
 }
 
@@ -161,8 +157,8 @@ void Character::checkCollisionsWithItems()
              * с чем именно произошло столкновение */
             if (obj->objectName() == "Bonus")
                 collideWithBonus(obj);
-            else if (obj->objectName() == "Checkpoint")
-                collideWithCheckpoint(obj);
+          /*else if (obj->objectName() == "Checkpoint")
+                collideWithCheckpoint(obj);*/
         }
     }
 }
