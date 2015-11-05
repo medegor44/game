@@ -7,6 +7,7 @@
 #include <QGraphicsObject>
 
 #include "game_model/graph.h"
+#include "game_objects/character.h"
 //#include "game_scene/game_scene.h"
 
 class Level : public QGraphicsObject
@@ -18,6 +19,7 @@ private:
 
     const int pixels = 30; // Размер стороны тайла в пикселях
     Graph *maze; // Лабиринт
+    Character *player;
     QVector<QPixmap> textures; // Текстуры
 
     void loadTextures();
@@ -35,6 +37,7 @@ public:
 
     void initGameObjects();
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
+    Character *getPLayer() const;
     QRectF boundingRect() const;
 
     ~Level();

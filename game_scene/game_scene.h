@@ -10,6 +10,7 @@
 #include "game_model/graph.h"
 #include "maze_generator/generators.h"
 #include "game_objects/character.h"
+#include "stat_item.h"
 
 #include "level/level.h"
 
@@ -28,11 +29,13 @@ protected:
 
     Graph *graph;
     Character *player = nullptr;
+    StatItem *stat;
 
     QTimer gameLoop;
     QPixmap landscapeTextures[Graph::maxTypes];
 
     void newLevel();
+    void setUpStat();
 
     void drawBackground(QPainter *painter, const QRectF &);
     void keyPressEvent(QKeyEvent *event);

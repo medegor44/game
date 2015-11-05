@@ -80,6 +80,8 @@ void Character::collideWithBonus(AbstractGameObject *obj)
         case Bonus::BonusType::coin:
             coinsScore += 50;
             qDebug() << "Coins score =" << coinsScore;
+
+            emit coinsScoreChanged(coinsScore);
             break;
             /* Продолжение следует... */
         }
@@ -132,6 +134,8 @@ void Character::updateLivesCount()
         return;
 
     lives -= cost;
+
+    emit livesChanged(lives);
 
     if (lives < 0)
         emit finished(false);

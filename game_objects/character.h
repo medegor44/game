@@ -45,8 +45,14 @@ protected:
     void keyPressEvent(QKeyEvent *event);
 
 signals:
-    // Сообщение о столкновении с конечным чекпоинтом
+    // Сигнал о столкновении с конечным чекпоинтом
     void finished(bool success, int remainig = -1, int coins = -1);
+
+    // Сигнал об изменении количетва жизней
+    void livesChanged(int newLives);
+
+    // Сигнал об изменении количества собранных монеток
+    void coinsScoreChanged(int newCoinsScore);
 
 public slots:
     void pause() { paused = true; }

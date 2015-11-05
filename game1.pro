@@ -23,7 +23,8 @@ SOURCES += main.cpp\
     game_objects/character.cpp \
     game_objects/checkpoint.cpp \
     maze_generator/generators.cpp \
-    level/level.cpp
+    level/level.cpp \
+    game_scene/stat_item.cpp
 
 HEADERS  += widget.h \
     game_model/graph.h \
@@ -35,7 +36,8 @@ HEADERS  += widget.h \
     game_objects/checkpoint.h \
     common_things.h \
     maze_generator/generators.h \
-    level/level.h
+    level/level.h \
+    game_scene/stat_item.h
 
 RESOURCES += \
     textures.qrc

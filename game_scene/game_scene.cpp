@@ -8,11 +8,23 @@ GameScene::GameScene(QObject *parent)
 {
     setItemIndexMethod(QGraphicsScene::NoIndex);
 
+    stat = new StatItem;
+    addItem(stat);
+
     newLevel();
+    setUpStat();
 
     connect(&gameLoop, &QTimer::timeout, this, &QGraphicsScene::advance);
 
     qDebug() << sceneRect();
+}
+
+void GameScene::setUpStat()
+{
+    stat->init();
+
+    stat->setX(level->boundingRect().right() + 2);
+    stat->setY(level->boundingRect().y());
 }
 
 void GameScene::drawBackground(QPainter *painter, const QRectF &)
@@ -31,6 +43,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
         break;
     case Qt::Key_G:
         newLevel();
+        setUpStat();
         break;
     case Qt::Key_Escape:
         emit pause();
@@ -62,12 +75,6 @@ void GameScene::newLevel()
     if (level != nullptr) // Удалить старый уровень, если он был создан
         delete level;
 
-    qDebug("Count of items before QGraphicsScene::clear() = %d", items().size());
-
-    clear(); // Очистить сцену
-
-    qDebug("Count of items after QGraphicsScene::clear() = %d", items().size());
-
     // Создание нового уровня и его инициализация
     level = new Level(graphWidth, graphHeight);
     addItem(level);
@@ -77,6 +84,13 @@ void GameScene::newLevel()
 
     connect(level, &Level::stop, &gameLoop, &QTimer::stop);
     connect(level, &Level::result, this, &GameScene::acceptResult);
+
+    connect(level->getPLayer(), &Character::livesChanged,
+            stat, &StatItem::updateLives);
+
+    connect(level->getPLayer(), &Character::coinsScoreChanged,
+            stat, &StatItem::updateCoins);
+
     update();
 }
 

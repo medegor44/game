@@ -22,6 +22,11 @@ void Level::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *
         }
 }
 
+Character *Level::getPLayer() const
+{
+    return player;
+}
+
 QRectF Level::boundingRect() const
 {
     return QRectF(0, 0, maze->getWidth() * pixels, maze->getHeight() * pixels);
@@ -40,7 +45,7 @@ void Level::initGameObjects()
                                   maze, CommonThings::up, this);
 
     // Объект игрка
-    Character *player = new Character(maze->getStartPos(), pixels, maze, this);
+    /*Character*/ player = new Character(maze->getStartPos(), pixels, maze, this);
 
     player->setFlag(QGraphicsItem::ItemIsFocusable);
     scene()->setFocusItem(player);
