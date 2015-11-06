@@ -42,6 +42,8 @@ void GameScene::keyPressEvent(QKeyEvent *event)
         emit play();
         break;
     case Qt::Key_G:
+        graphWidth += 2;
+        graphHeight += 2;
         newLevel();
         setUpStat();
         break;
