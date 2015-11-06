@@ -37,7 +37,7 @@ protected:
     void newLevel();
     void setUpStat();
 
-    void drawBackground(QPainter *painter, const QRectF &);
+    void drawBackground(QPainter *painter, const QRectF &rect);
     void keyPressEvent(QKeyEvent *event);
 
 signals:

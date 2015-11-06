@@ -27,9 +27,10 @@ void GameScene::setUpStat()
     stat->setY(level->boundingRect().y());
 }
 
-void GameScene::drawBackground(QPainter *painter, const QRectF &)
+void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
 {
     level->paint(painter, 0, 0);
+    QGraphicsScene::drawBackground(painter, rect);
 }
 
 void GameScene::keyPressEvent(QKeyEvent *event)
@@ -42,8 +43,6 @@ void GameScene::keyPressEvent(QKeyEvent *event)
         emit play();
         break;
     case Qt::Key_G:
-        graphWidth += 2;
-        graphHeight += 2;
         newLevel();
         setUpStat();
         break;
