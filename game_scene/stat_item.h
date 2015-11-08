@@ -5,6 +5,8 @@
 
 class StatItem : public QGraphicsTextItem
 {
+    Q_OBJECT
+
 private:
     QString text;
     int currentLives;
