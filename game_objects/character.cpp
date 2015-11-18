@@ -174,7 +174,10 @@ void Character::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidg
 
 void Character::keyPressEvent(QKeyEvent *event)
 {
-    if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0 || paused)
+    if (event->key() == Qt::Key_Enter || event->key() == Qt::Key_Return)
+        paused = false;
+
+    if (int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0 || paused)
         return;
 
     QString text = event->text();
