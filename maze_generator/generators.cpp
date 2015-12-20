@@ -67,17 +67,21 @@ void MazeGenerator::start(bool indefinite)
     std::default_random_engine random(std::chrono::system_clock::now()
                                       .time_since_epoch().count());
 
+    // Помечаем стартовую клутку поля как посещенную
     maze[current.y()][current.x()] = visited;
 
     cellCount--;
     while(cellCount) {
-        QVector <QPoint> neighbours = getNeighbours(current);
+        QVector<QPoint> neighbours = getNeighbours(current);
 
-        if(neighbours.size() > 0) {
-            stack.push(current);
+        if(neighbours.size() > 0) { // Есть клетки, в которые можно перейти
+            stack.push(current); // Проталкиваем в стек текущую клетку
+
+            // Случайно выбираем следущую клетку поля
             QPoint next = neighbours[random() % neighbours.size()];
 
-            if(next.y() == current.y()) {
+            // Удаляес стенку между текущей клеткой и выбранной
+            if(next.y() == current.y()) { //
                 int x = (next.x() + current.x()) / 2;
                 maze[next.y()][x] = maze[next.y()][next.x()] = visited;
             } else {
@@ -85,12 +89,14 @@ void MazeGenerator::start(bool indefinite)
                 maze[y][next.x()] = maze[next.y()][next.x()] = visited;
             }
 
-            current = next;
+            current = next; // Переходим на новую клетку
             cellCount--;
-        } else if(!stack.isEmpty())
-            current = stack.pop();
+        } else if(!stack.isEmpty()) // Стек не пуст
+            current = stack.pop(); // Удаляем текущую позицию из стека
     }
 
+    /* Делаем лабиринт неопределенным (между любыми 2 клетками
+     * есть как минимум 2 пути) */
     if(indefinite)
         makeIndefinite();
 
