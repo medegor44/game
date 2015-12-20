@@ -16,7 +16,7 @@ class Character : public AbstractGameObject
 private:
     const int step = 3; // Количество пикселей, на котороее персонаж продвигается за тик таймера.
     int coinsScore = 0; // Количество монеток, собранных игроком
-    bool paused = true; // Флаг, запрещающий движение, если игра поставлена на паузу
+    bool paused = false; // Флаг, запрещающий движение, если игра поставлена на паузу
     int lives; // Количество жизней
 
     // текущее направление робота
@@ -55,8 +55,15 @@ signals:
     void coinsScoreChanged(int newCoinsScore);
 
 public slots:
-    void pause() { paused = true; }
-    void play() { paused = false; }
+    void pause()
+    {
+        paused = true;
+    }
+
+    void play()
+    {
+        paused = false;
+    }
 
 public:
     Character(QPoint bp, int pixels, Graph *gameBoard, QGraphicsItem *parent = 0);

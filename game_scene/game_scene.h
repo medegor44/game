@@ -11,6 +11,7 @@
 #include "maze_generator/generators.h"
 #include "game_objects/character.h"
 #include "stat_item.h"
+#include "pause_menu.h"
 
 #include "level/level.h"
 
@@ -40,11 +41,14 @@ protected:
     void drawBackground(QPainter *painter, const QRectF &rect);
     void keyPressEvent(QKeyEvent *event);
 
+private:
+    PauseMenu *pauseMenu;
+
 signals:
-    void play();
     void pause();
 
 public slots:
+    void play();
     void finished();
     void acceptResult(bool success, int score);
 

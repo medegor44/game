@@ -1,4 +1,5 @@
 #include "game_scene.h"
+#include "game_objects/character.h"
 
 #include <QMessageBox>
 #include <QDebug>
@@ -14,9 +15,23 @@ GameScene::GameScene(QObject *parent)
     newLevel();
     setUpStat();
 
+    pauseMenu = new PauseMenu();
+
     connect(&gameLoop, &QTimer::timeout, this, &QGraphicsScene::advance);
 
+//    connect(this, &GameScene::play, &gameLoop, &QTimer::start);
+    connect(pauseMenu, &PauseMenu::accepted, this, &GameScene::play);
+    connect(this, &GameScene::pause, &gameLoop, &QTimer::stop);
+    connect(this, &GameScene::pause, pauseMenu, &PauseMenu::show);
+
+    emit pause();
+
     qDebug() << sceneRect();
+}
+
+void GameScene::play()
+{
+    gameLoop.start(1000/35);
 }
 
 void GameScene::setUpStat()
@@ -36,20 +51,15 @@ void GameScene::drawBackground(QPainter *painter, const QRectF &rect)
 void GameScene::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key()) {
-    case Qt::Key_Return:
-    case Qt::Key_Enter:
-        gameLoop.start(1000/35);
-        qDebug() << "Start";
-        emit play();
-        break;
     case Qt::Key_G:
-        newLevel();
-        setUpStat();
+        if (!gameLoop.isActive()) {
+            newLevel();
+            setUpStat();
+        } else
+            QMessageBox::information(nullptr, "Info", "Please complete this level.");
         break;
     case Qt::Key_Escape:
         emit pause();
-        gameLoop.stop();
-        QMessageBox::information(nullptr, "Puase", "Game paused.");
         break;
     }
 
@@ -98,4 +108,5 @@ void GameScene::newLevel()
 GameScene::~GameScene()
 {
     delete level;
+    delete pauseMenu;
 }
