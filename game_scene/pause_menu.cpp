@@ -8,7 +8,7 @@ PauseMenu::PauseMenu(QWidget *parent)
     play = new QPushButton("Play", this);
     info = new QLabel(this);
 
-    info->setText("Press \"Play\" or Enter to continue.");
+    info->setText(tr("Press \"Play\" or Enter to start."));
     mainLayout = new QVBoxLayout;
 
     mainLayout->addWidget(info);

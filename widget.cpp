@@ -6,6 +6,8 @@ Widget::Widget(QWidget *parent)
 //    player = new QMediaPlayer(this);
 //    player->setMedia(QUrl::fromLocalFile("C:/Projects/C++/game/sounds/sound.mp3"));
 
+    showMaximized();
+
     mainLayout = new QHBoxLayout(this);
 
     view = new QGraphicsView(this);

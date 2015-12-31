@@ -19,7 +19,6 @@ GameScene::GameScene(QObject *parent)
 
     connect(&gameLoop, &QTimer::timeout, this, &QGraphicsScene::advance);
 
-//    connect(this, &GameScene::play, &gameLoop, &QTimer::start);
     connect(pauseMenu, &PauseMenu::accepted, this, &GameScene::play);
     connect(this, &GameScene::pause, &gameLoop, &QTimer::stop);
     connect(this, &GameScene::pause, pauseMenu, &PauseMenu::show);
@@ -31,6 +30,7 @@ GameScene::GameScene(QObject *parent)
 
 void GameScene::play()
 {
+    level->getPLayer()->play();
     gameLoop.start(1000/35);
 }
 
@@ -53,6 +53,7 @@ void GameScene::keyPressEvent(QKeyEvent *event)
     switch (event->key()) {
     case Qt::Key_G:
         if (!gameLoop.isActive()) {
+            emit pause();
             newLevel();
             setUpStat();
         } else
@@ -96,7 +97,7 @@ void GameScene::newLevel()
     connect(level, &Level::stop, &gameLoop, &QTimer::stop);
     connect(level, &Level::result, this, &GameScene::acceptResult);
 
-    connect(level->getPLayer(), &Character::livesChanged,
+    connect(level->getPLayer(), &Character::turnsChanged,
             stat, &StatItem::updateLives);
 
     connect(level->getPLayer(), &Character::coinsScoreChanged,

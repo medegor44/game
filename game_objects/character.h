@@ -17,7 +17,7 @@ private:
     const int step = 3; // Количество пикселей, на котороее персонаж продвигается за тик таймера.
     int coinsScore = 0; // Количество монеток, собранных игроком
     bool paused = false; // Флаг, запрещающий движение, если игра поставлена на паузу
-    int lives; // Количество жизней
+    int turns; // Количество жизней
 
     // текущее направление робота
     CommonThings::Directions currentDirecton;
@@ -38,7 +38,7 @@ private:
     // Устаревший метод!
     void collideWithCheckpoint(AbstractGameObject *obj); // Обработка столкновений с чекпоинтом
 
-    void updateLivesCount(); // Обновление стоимости пройденного пути
+    void updateTurnsCount(); // Обновление стоимости пройденного пути
 
 protected:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
@@ -49,20 +49,21 @@ signals:
     void finished(bool success, int remainig = -1, int coins = -1);
 
     // Сигнал об изменении количетва жизней
-    void livesChanged(int newLives);
+    void turnsChanged(int newLives);
 
     // Сигнал об изменении количества собранных монеток
     void coinsScoreChanged(int newCoinsScore);
 
 public slots:
-    void pause()
-    {
-        paused = true;
-    }
+//    void pause()
+//    {
+//        paused = true;
+//    }
 
     void play()
     {
         paused = false;
+        emit turnsChanged(turns);
     }
 
 public:

@@ -12,7 +12,7 @@ void StatItem::paint(QPainter *painter, const QStyleOptionGraphicsItem *o, QWidg
 StatItem::StatItem(QGraphicsItem *parent)
     : QGraphicsTextItem(parent)
 {
-    text = "<h2>Lives = %1<br/>Coins = %2</h2>";
+    text = "<h2>Turns count = %1<br/>Coins = %2</h2>";
     currentCoins = currentLives = 0;
 }
 

@@ -7,7 +7,7 @@ using CommonThings::Directions;
 Character::Character(QPoint bp, int pixels, Graph *gameBoard, QGraphicsItem *parent)
     : AbstractGameObject(bp, pixels, parent)
 {
-    lives = int(gameBoard->getDist() * 1.15);
+    turns = int(gameBoard->getDist() * 1.15);
 
     coinsScore = 0;
 
@@ -32,7 +32,7 @@ void Character::advance(int phase)
         return;
     }
 
-    updateLivesCount(); // Обновить стоимость пройденного пути
+    updateTurnsCount(); // Обновить стоимость пройденного пути
 
     switch (currentDirecton) {
     case Directions::down:
@@ -64,7 +64,7 @@ void Character::advance(int phase)
 
         if (boardPos == end) {
             qDebug() << "********* Level complete! *********";
-            emit finished(true, lives, coinsScore);
+            emit finished(true, turns, coinsScore);
         }
     }
 }
@@ -75,7 +75,7 @@ void Character::collideWithBonus(AbstractGameObject *obj)
     if(bonus->active()) {
         switch (bonus->getType()) {
         case Bonus::BonusType::live:
-            lives++;
+            turns++;
             break;
         case Bonus::BonusType::coin:
             coinsScore += 50;
@@ -110,7 +110,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
             currentCheckpoint = chpoint;
             break;
         case Checkpoint::CheckpointType::end:
-            emit finished(true, lives, coinsScore);
+            emit finished(true, turns, coinsScore);
             qDebug() << "********* Level complete! *********";
             break;
         }
@@ -119,7 +119,7 @@ void Character::collideWithCheckpoint(AbstractGameObject *obj)
     }
 }
 
-void Character::updateLivesCount()
+void Character::updateTurnsCount()
 {
     if(int(x()) % cellWidth != 0 || int(y()) % cellWidth != 0
             || currentDirecton == Directions::none) {
@@ -133,16 +133,21 @@ void Character::updateLivesCount()
     if(cost == 0) // В данном нпаправлении находится стена или персонаж не движется
         return;
 
-    lives -= cost;
+    turns -= cost;
 
-    emit livesChanged(lives);
-
-    if (lives < 0)
+    if (turns < 0) {
+        emit turnsChanged(0);
         emit finished(false);
+
+        return;
+    }
+
+    emit turnsChanged(turns);
+
 
     qDebug() << "Cost at" << boardPos
              << "is" << cost << '\n'
-             << "live =" << lives;
+             << "live =" << turns;
 }
 
 void Character::checkCollisionsWithItems()
